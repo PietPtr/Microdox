@@ -23,8 +23,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "debug.h"
 
 
-static action_t keycode_to_action(uint8_t keycode);
+#ifdef KEYCODE_16_BIT
+uint16_t actionmap_key_to_action(uint8_t layer, keypos_t key);
 
+action_t action_for_key(uint8_t layer, keypos_t key) {
+  uint16_t keycode = actionmap_key_to_action(layer, key);
+  if(keycode >= KC_FN0 && keycode <= KC_FN31) {
+    return keymap_fn_to_action(keycode);
+  } else {
+    action_t action;
+    action.key.code = (uint8_t)keycode;
+    action.key.mods = (keycode >> 8) & 0x1f;
+
+    return action;
+  }
+}
+#else
+static action_t keycode_to_action(uint8_t keycode);
 
 /* converts key to action */
 action_t action_for_key(uint8_t layer, keypos_t key)
@@ -104,21 +119,6 @@ action_t action_for_key(uint8_t layer, keypos_t key)
 }
 
 
-/* Macro */
-__attribute__ ((weak))
-const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
-{
-    return MACRO_NONE;
-}
-
-/* Function */
-__attribute__ ((weak))
-void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
-{
-}
-
-
-
 /* translates keycode to action */
 static action_t keycode_to_action(uint8_t keycode)
 {
@@ -146,7 +146,20 @@ static action_t keycode_to_action(uint8_t keycode)
     }
     return action;
 }
+#endif
 
+/* Macro */
+__attribute__ ((weak))
+const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
+{
+    return MACRO_NONE;
+}
+
+/* Function */
+__attribute__ ((weak))
+void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
+{
+}
 
 
 #ifdef USE_LEGACY_KEYMAP

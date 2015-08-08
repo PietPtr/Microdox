@@ -105,14 +105,20 @@ void bootmagic(void)
     }
 }
 
-static bool scan_keycode(uint8_t keycode)
+/* static bool scan_keycode(uint8_t keycode) */
+static bool scan_keycode(uint16_t keycode)
 {
     for (uint8_t r = 0; r < MATRIX_ROWS; r++) {
         matrix_row_t matrix_row = matrix_get_row(r);
         for (uint8_t c = 0; c < MATRIX_COLS; c++) {
             if (matrix_row & ((matrix_row_t)1<<c)) {
+#ifdef KEYCODE_16_BIT
+                if (keycode == actionmap_key_to_action(0, (keypos_t){ .row = r, .col = c })) {
+                    return true;
+#else
                 if (keycode == keymap_key_to_keycode(0, (keypos_t){ .row = r, .col = c })) {
                     return true;
+#endif
                 }
             }
         }

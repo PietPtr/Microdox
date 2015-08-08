@@ -159,6 +159,51 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* Transparent */
 #define KC_TRANSPARENT  1
 #define KC_TRNS KC_TRANSPARENT
+/* 16 bit keycode expansions */
+#ifdef KEYCODE_16_BIT
+#define SHIFT(key) ACTION(ACT_MODS, (MOD_LSFT << 8) | (key))
+#define CTRL(key) ACTION(ACT_MODS, (MOD_LCTL << 8) | (key))
+#define ALT(key) ACTION(ACT_MODS, (MOD_LALT << 8) | (key))
+#define GUI(key) ACTION(ACT_MODS, (MOD_LGUI << 8) | (key))
+#define KC_S_1                    SHIFT(KC_1)
+#define KC_S_2                    SHIFT(KC_2)
+#define KC_S_3                    SHIFT(KC_3)
+#define KC_S_4                    SHIFT(KC_4)
+#define KC_S_5                    SHIFT(KC_5)
+#define KC_S_6                    SHIFT(KC_6)
+#define KC_S_7                    SHIFT(KC_7)
+#define KC_S_8                    SHIFT(KC_8)
+#define KC_S_9                    SHIFT(KC_9)
+#define KC_S_0                    SHIFT(KC_0)
+#define KC_BANG                   KC_S_1
+#define KC_AT                     KC_S_2
+#define KC_HASH                   KC_S_3
+#define KC_DOLA                   KC_S_4
+#define KC_PERC                   KC_S_5
+#define KC_CART                   KC_S_6
+#define KC_AMP                    KC_S_7
+#define KC_ASTR                   KC_S_8
+#define KC_LPRN                   KC_S_9
+#define KC_RPRN                   KC_S_0
+#define KC_UNDERSCORE             SHIFT(KC_MINS)
+#define KC_UNDS                   UNDERSCORE
+#define KC_PLUS                   SHIFT(KC_EQL)
+#define KC_PIPE                   SHIFT(KC_BSLS)
+#define KC_LCBRACKET              SHIFT(KC_LBRC)
+#define KC_RCBRACKET              SHIFT(KC_RBRC)
+#define KC_LCBR                   KC_LCBRACKET
+#define KC_RCBR                   KC_RCBRACKET
+#define KC_DOUBLE_QUOTE           SHIFT(KC_QUOT)
+#define KC_DQUT                   KC_DOUBLE_QUOTE
+#define KC_COLON                  SHIFT(KC_SCLN)
+#define KC_CLN                    KC_COLON
+#define KC_QUESTION_MARK          SHIFT(KC_SLSH)
+#define KC_QMRK                   KC_QUESTION_MARK
+#define KC_LESS                   SHIFT(KC_COMM)
+#define KC_MORE                   SHIFT(KC_DOT)
+#define KC_TILDE                  SHIFT(KC_GRAVE)
+#define KC_TILD                   KC_TILDE
+#endif
 
 
 
