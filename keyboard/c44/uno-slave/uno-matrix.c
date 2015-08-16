@@ -100,25 +100,29 @@ matrix_row_t matrix_get_row(uint8_t row)
     return matrix[row];
 }
 
+// TODO update this comment
 /* Column pin configuration
  * col: 0   1   2   3   4   5
- * pin: D2  D3  D4  D5  D6  D7
+ * pin: D3  D4  D5  D6  D7  B0
  */
 static void  init_cols(void)
 {
     // Input with pull-up(DDR:0, PORT:1)
-  DDRD  &= ~(1<<2 | 1<<3 | 1<<4 | 1<<5 | 1<<6 | 1<<7);
-  PORTD |=  (1<<2 | 1<<3 | 1<<4 | 1<<5 | 1<<6 | 1<<7);
+  DDRD  &= ~(1<<3 | 1<<4 | 1<<5 | 1<<6 | 1<<7);
+  PORTD |=  (1<<3 | 1<<4 | 1<<5 | 1<<6 | 1<<7);
+
+  DDRB  &= ~(1<<0);
+  PORTB |=  (1<<0);
 }
 
 static matrix_row_t read_cols(void)
 {
-    return (PIND&(1<<2) ? 0 : (1<<0)) |
-           (PIND&(1<<3) ? 0 : (1<<1)) |
-           (PIND&(1<<4) ? 0 : (1<<2)) |
-           (PIND&(1<<5) ? 0 : (1<<3)) |
-           (PIND&(1<<6) ? 0 : (1<<4)) |
-           (PIND&(1<<7) ? 0 : (1<<5));
+    return (PIND&(1<<3) ? 0 : (1<<0)) |
+           (PIND&(1<<4) ? 0 : (1<<1)) |
+           (PIND&(1<<5) ? 0 : (1<<2)) |
+           (PIND&(1<<6) ? 0 : (1<<3)) |
+           (PIND&(1<<7) ? 0 : (1<<4)) |
+           (PINB&(1<<0) ? 0 : (1<<5));
 }
 
 /* Row pin configuration

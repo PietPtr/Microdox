@@ -11,6 +11,7 @@ TARGET = keyboard-i2c-slave
 SRC = \
 	$(TARGET).c \
 	uno-matrix.c \
+	../serial.c \
 	../i2c-slave.c
 
 ASRC =
@@ -47,8 +48,8 @@ CDEBUG = -g$(DEBUG)
 CWARN = -Wall -Wstrict-prototypes
 CTUNING = -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
 #CEXTRA = -Wa,-adhlns=$(<:.c=.lst)
-CFLAGS = $(CDEBUG) $(CDEFS) $(CINCS) -O$(OPT) $(CWARN) $(CSTANDARD) $(CEXTRA)
-
+CFLAGS = $(CDEBUG) $(CDEFS) $(CINCS) -O$(OPT) $(CWARN) $(CSTANDARD) $(CEXTRA) \
+	-fno-aggressive-loop-optimizations
 
 #ASFLAGS = -Wa,-adhlns=$(<:.S=.lst),-gstabs
 
@@ -147,8 +148,6 @@ sym: $(TARGET).sym
 # Program the device.
 program: $(TARGET).hex $(TARGET).eep
 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
-
-
 
 
 # Convert ELF to COFF for use in debugging / simulating in AVR Studio or VMLAB.

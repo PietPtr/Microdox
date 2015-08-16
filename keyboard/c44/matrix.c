@@ -24,11 +24,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/wdt.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include "lufa.h"
 #include "print.h"
 #include "debug.h"
 #include "util.h"
 #include "matrix.h"
 #include "i2c-master.h"
+#include "serial.h"
 
 #ifndef DEBOUNCE
 #   define DEBOUNCE	5
@@ -68,12 +70,23 @@ void matrix_init(void)
     unselect_rows();
     init_cols();
 
+#ifdef USE_I2C
     i2c_master_init();
+#else
+    serial_master_init();
+#endif
+
+    int x = USB_IsInitialized;
+    if (x) {
+        DDRD  |= 1<<5;
+        PORTD &= ~(1<<5);
+    } else {
 
     // use the pro micro TX led as an indicator
     // pull D5 low to turn on
     DDRD  |= 1<<5;
     PORTD |= (1<<5);
+    }
 
     // initialize matrix state: all keys off
     for (uint8_t i=0; i < MATRIX_ROWS; i++) {
@@ -117,6 +130,7 @@ uint8_t matrix_scan(void)
 {
     int ret = _matrix_scan();
 
+#ifdef USE_I2C
     // Get rows from other half over i2c
     // Matrix stored at 0x00-0x03
     int err = i2c_master_start(SLAVE_I2C_ADDRESS + I2C_WRITE);
@@ -150,6 +164,25 @@ i2c_error: // the cable is disconnceted, or something else went wrong
         matrix[6] = 0;
         matrix[7] = 0;
     }
+#else
+    if( serial_transaction() ) {
+        // turn on the indicator led
+        PORTD &= ~(1<<5);
+        // if we cannot communicate with the other half, then unset all of its keys
+        matrix[4] = 0;
+        matrix[5] = 0;
+        matrix[6] = 0;
+        matrix[7] = 0;
+    } else {
+        // turn off the indicator led on no error
+        PORTD |= (1<<5);
+        // no error
+        matrix[4] = serial_slave_buffer[0];
+        matrix[5] = serial_slave_buffer[1];
+        matrix[6] = serial_slave_buffer[2];
+        matrix[7] = serial_slave_buffer[3];
+    }
+#endif
 
     return ret;
 }
