@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/wdt.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
-#include "lufa.h"
+/* #include "lufa.h" */
 #include "print.h"
 #include "debug.h"
 #include "util.h"
@@ -76,17 +76,17 @@ void matrix_init(void)
     serial_master_init();
 #endif
 
-    int x = USB_IsInitialized;
-    if (x) {
-        DDRD  |= 1<<5;
-        PORTD &= ~(1<<5);
-    } else {
+    /* int x = USB_IsInitialized; */
+    /* if (x) { */
+    /*     DDRD  |= 1<<5; */
+    /*     PORTD &= ~(1<<5); */
+    /* } else { */
 
     // use the pro micro TX led as an indicator
     // pull D5 low to turn on
     DDRD  |= 1<<5;
     PORTD |= (1<<5);
-    }
+    /* } */
 
     // initialize matrix state: all keys off
     for (uint8_t i=0; i < MATRIX_ROWS; i++) {

@@ -39,7 +39,7 @@
 #----------------------------------------------------------------------------
 
 # Target file name (without extension).
-TARGET = onekey_pjrc
+TARGET = c44_pjrc
 
 # Directory common source filess exist
 TMK_DIR = ../../tmk_core
@@ -50,6 +50,9 @@ TARGET_DIR = .
 # project specific files
 SRC =	keymap.c \
 	matrix.c \
+	i2c-master.c \
+	i2c-slave.c \
+	serial.c \
 	led.c
 
 CONFIG_H = config.h
@@ -85,7 +88,7 @@ OPT_DEFS += -DBOOTLOADER_SIZE=4096
 CONSOLE_ENABLE = yes    # Console for debug
 #COMMAND_ENABLE = yes    # Commands for debug and configuration
 #SLEEP_LED_ENABLE = yes  # Breathing sleep LED during USB suspend
-#NKRO_ENABLE = yes	# USB Nkey Rollover(+500)
+NKRO_ENABLE = yes	# USB Nkey Rollover(+500)
 
 PS2_MOUSE_ENABLE = yes	# PS/2 mouse(TrackPoint) support
 PS2_USE_BUSYWAIT = yes # uses primitive reference code

@@ -53,7 +53,9 @@ SRC =	keymap.c \
 	i2c-master.c \
 	i2c-slave.c \
 	serial.c \
+	main.c \
 	led.c
+	# main.cpp \
 
 CONFIG_H = config.h
 

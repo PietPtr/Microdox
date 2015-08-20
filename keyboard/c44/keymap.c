@@ -134,17 +134,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
            KC_TRNS       , KC_F1         , KC_F2         , KC_F3          , KC_F4       , KC_F5     ,
            KC_TRNS       , KC_TRNS       , KC_TRNS       , KC_TRNS        , KC_TRNS     ,
         /* right hand */
-           KC_NO        , CTRL(KC_HOME) , CTRL(KC_UP)   , CTRL(KC_END)   , KC_DEL       , KC_F12    ,
-           /* CTRL(KC_DEL) , CTRL(KC_LEFT) , CTRL(KC_DOWN) , CTRL(KC_RIGHT) , CTRL(KC_BSPC) , KC_F11    , */
-           KC_TAB , CTRL(KC_LEFT) , CTRL(KC_DOWN) , CTRL(KC_RIGHT) , KC_ENT , KC_F11    ,
-           KC_F6        , KC_F7         , KC_F8         , KC_F9          , KC_F10        , KC_TRNS   ,
-           KC_TRNS      , KC_TRNS       , KC_TRNS       , KC_TRNS        , KC_TRNS
+           CTRL(KC_PGUP)   , CTRL(KC_HOME) , CTRL(KC_UP)   , CTRL(KC_END)   , CTRL(KC_DEL)  , KC_F12  ,
+           CTRL(KC_PGDOWN) , CTRL(KC_LEFT) , CTRL(KC_DOWN) , CTRL(KC_RIGHT) , CTRL(KC_BSPC) , KC_F11  ,
+           KC_F6           , KC_F7         , KC_F8         , KC_F9          , KC_F10        , KC_TRNS ,
+           KC_TRNS         , KC_TRNS       , KC_TRNS       , KC_TRNS        , KC_TRNS
         )
     , /* 3: media */
     KEYMAP_NO_PREFIX(
         /* left hand */
            ALT(KC_TAB) , KC_PSCR   , KC_MSTP   , KC__VOLUP  , KC_STOP  , KC_F11    ,
-           /* SHIFT(ALT(KC_TAB)) , KC__MUTE  , KC_MNXT   , KC__VOLDOWN, KC_MPRV , */
            SHIFT(ALT(KC_TAB)) , KC__MUTE  , KC_MNXT   , KC__VOLDOWN, KC_MPRV ,
            KC_APP,
            KC_LGUI , CTRL(KC_SLSH), CTRL(KC_B), CTRL(KC_I) , CTRL(KC_DOT), CTRL(KC_SCLN) ,
