@@ -92,38 +92,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         /* left hand */
            FN6  , Q    , W   , E    , R    , T ,
            FN5  , A    , S   , D    , F    , G ,
+           /* MINS  , A    , S   , D    , F    , G , */
+           /* FN9  , A    , S   , D    , F    , G , */
            LALT , Z    , X   , C    , V    , B ,
            NO, FN2 , FN1 , SPC , LCTL ,
         /* right hand */
-           /* Y    , U    , I   , O    , P    , DEL , */
-           Y    , U    , I   , O    , P    , BSLS ,
+           Y    , U    , I   , O    , P    , MINS ,
            H    , J    , K   , L    , SCLN , QUOT ,
-           N    , M    , COMM, DOT  , SLSH , RALT ,
+           N    , M    , COMM, DOT  , SLSH , ENT ,
            /* FN3 , BSPC , FN0  , RGUI, NO */
            BSPC , FN3 , FN0  , RGUI, NO
         )
     , /* 1: symbol */
     KEYMAP_NO_PREFIX(
-       /* /1* left hand *1/ */
-       /*     KC_GRV         , SHIFT(KC_GRV) , KC_2           , KC_3        , KC_4           , KC_5        , */
-       /*     KC_TRNS        , SHIFT(KC_1)   , SHIFT(KC_LBRC) , KC_1        , SHIFT(KC_9)    , KC_MINS     , */
-       /*     KC_TRNS        , SHIFT(KC_4)   , SHIFT(KC_2)    , SHIFT(KC_3) , SHIFT(KC_MINS) , SHIFT(KC_5) , */
-       /*     KC_TRNS        , KC_TRNS       , KC_TRNS        , KC_TRNS     , KC_TRNS        , */
-       /*  /1* right hand *1/ */
-       /*     KC_6           , KC_7          , KC_8           , KC_9        , SHIFT(KC_BSLS) , KC_TRNS     , */
-       /*     KC_EQL         , SHIFT(KC_0)   , KC_0           , KC_RBRC     , KC_LBRC        , KC_BSLS     , */
-       /*     SHIFT(KC_6)    , SHIFT(KC_EQL) , SHIFT(KC_8)    , */
-       /*     SHIFT(KC_RBRC) , SHIFT(KC_7)   , KC_TRNS        , */
-       /*     KC_TRNS        , KC_TRNS       , KC_TRNS        , KC_TRNS     , KC_TRNS */
        /* left hand */
-           KC_TRNS , KC_W      , KC_2        , KC_3        , KC_4        , KC_5           ,
-           KC_TRNS , KC_1        , KC_LBRC     , SHIFT(KC_9) , KC_MINS     , SHIFT(KC_MINS) ,
+           KC_TRNS , KC_GRV      , KC_2        , KC_3        , KC_4        , KC_5           ,
+           KC_TRNS , KC_1        , KC_BSLS , SHIFT(KC_9) , KC_LBRC   , SHIFT(KC_LBRC) ,
            KC_TRNS , SHIFT(KC_1) , SHIFT(KC_2) , SHIFT(KC_3) , SHIFT(KC_4) , SHIFT(KC_5)    ,
            KC_TRNS , KC_TRNS     , KC_TRNS     , KC_TRNS     , KC_TRNS     ,
         /* right hand */
-           KC_6          , KC_7        , KC_8        , KC_9           , KC_E           , KC_GRV        ,
-           SHIFT(KC_EQL) , KC_EQL      , SHIFT(KC_0) , KC_RBRC        , KC_0           , SHIFT(KC_GRV) ,
-           SHIFT(KC_6)   , SHIFT(KC_7) , SHIFT(KC_8) , SHIFT(KC_RBRC) , SHIFT(KC_LBRC) , KC_TRNS       ,
+           KC_6          , KC_7        , KC_8        , KC_9           , KC_DOT , KC_COMM        ,
+           SHIFT(KC_RBRC) , KC_RBRC    , SHIFT(KC_0) , KC_EQL        , KC_0 , KC_MINS ,
+           SHIFT(KC_6)   , SHIFT(KC_7) , SHIFT(KC_8) , SHIFT(KC_EQL) , SHIFT(KC_GRV) , KC_TRNS       ,
            KC_TRNS       , KC_TRNS     , KC_TRNS     , KC_TRNS        , KC_TRNS
     )
     , /* 2: fn */
@@ -142,9 +132,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     , /* 3: media */
     KEYMAP_NO_PREFIX(
         /* left hand */
-           ALT(KC_TAB) , KC_PSCR   , KC_MSTP   , KC__VOLUP  , KC_STOP  , KC_F11    ,
-           SHIFT(ALT(KC_TAB)) , KC__MUTE  , KC_MNXT   , KC__VOLDOWN, KC_MPRV ,
-           KC_APP,
+           /* ALT(KC_TAB) , KC_PSCR   , KC_MSTP   , KC__VOLUP  , KC_STOP  , KC_F11    , */
+           ALT(KC_TAB) , KC_PSCR   , 164   , KC__VOLUP  , KC_STOP  , KC_F11    ,
+           SHIFT(ALT(KC_TAB)) , KC__MUTE  , KC_MNXT   , KC__VOLDOWN, KC_MPRV , KC_APP,
+           /* SHIFT(ALT(KC_TAB)) , KC__MUTE  , 165   , KC__VOLDOWN, 163 , KC_APP, */
            KC_LGUI , CTRL(KC_SLSH), CTRL(KC_B), CTRL(KC_I) , CTRL(KC_DOT), CTRL(KC_SCLN) ,
            KC_TRNS , KC_TRNS   , KC_TRNS   , KC_TRNS    , KC_TRNS   ,
         /* right hand */
@@ -182,6 +173,7 @@ static const uint16_t PROGMEM fn_actions[] = {
     ACTION_LAYER_TAP_KEY(1, KC_TAB), // FN6
     ACTION_LAYER_TOGGLE(4), // FN7 (num pad)
     ACTION_LAYER_TOGGLE(0), // FN8 (L0)
+    ACTION_MODS_TAP_KEY(MOD_LSFT, KC_MINS), // FN9
     /* MACRO(T(END), D(LSHIFT), T(HOME), U(LSHIFT), D(LCTRL), T(X), U(LCTRL), END), // FN9 cut line */
     /* MACRO( I(255), T(H), T(E), T(L), T(L), W(255), T(O), END ), */
 };

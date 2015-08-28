@@ -187,6 +187,15 @@ i2c_error: // the cable is disconnceted, or something else went wrong
     return ret;
 }
 
+void matrix_slave_scan(void) {
+    int ret = _matrix_scan();
+
+    serial_slave_buffer[0] = matrix[0];
+    serial_slave_buffer[1] = matrix[1];
+    serial_slave_buffer[2] = matrix[2];
+    serial_slave_buffer[3] = matrix[3];
+}
+
 bool matrix_is_modified(void)
 {
     if (debouncing) return false;
