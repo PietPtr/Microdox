@@ -1,43 +1,16 @@
-#include <avr/io.h>
-#include <avr/power.h>
-#include <avr/wdt.h>
 #include "lufa.h"
 #include "keyboard.h"
-#include "keycode.h"
-#include "action.h"
-#include "action_util.h"
 #include "wait.h"
+#include "c44-util.h"
 
-static void setup_hardware(void)
-{
-    /* Disable watchdog if enabled by bootloader/fuses */
-    MCUSR &= ~(1 << WDRF);
-    wdt_disable();
-
-    /* Disable clock division */
-    clock_prescale_set(clock_div_1);
-
-    // Leonardo needs. Without this USB device is not recognized.
-    USB_Disable();
-
-    USB_Init();
-
-    // for Console_Task
-    USB_Device_EnableSOFEvents();
-}
-
+// slave version of matix scan, defined in matrix.c
 void matrix_slave_scan(void);
-
-bool has_usb(void) {
-   USBCON |= (1 << OTGPADE); //enables VBUS pad
-   _delay_us(10);
-   return (USBSTA & (1<<VBUS));  //checks state of VBUS
-}
 
 int main(void)  __attribute__ ((weak));
 int main(void)
 {
     setup_hardware();
+    setup_set_handedness();
     sei();
 
     /* wait for USB startup to get ready for debug output */

@@ -113,7 +113,7 @@ void serial_write_byte(uint8_t data) {
 }
 
 // interrupt handle to be used by the slave device
-ISR(INT0_vect) {
+ISR(SERIAL_PIN_INTERRUPT) {
   sync_send();
 
   for (int i = 0; i < SERIAL_SLAVE_BUFFER_LENGTH; ++i) {

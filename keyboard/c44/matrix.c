@@ -24,13 +24,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <avr/wdt.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
-/* #include "lufa.h" */
 #include "print.h"
 #include "debug.h"
 #include "util.h"
 #include "matrix.h"
 #include "i2c-master.h"
 #include "serial.h"
+#include "c44-util.h"
 
 #ifndef DEBOUNCE
 #   define DEBOUNCE	5
@@ -98,12 +98,15 @@ void matrix_init(void)
 
 uint8_t _matrix_scan(void)
 {
+    // Right hand is stored after the left in the matirx so, we need to offset it
+    int offset = isLeftHand ? 0 : (ROWS_PER_HAND);
+
     for (uint8_t i = 0; i < ROWS_PER_HAND; i++) {
         select_row(i);
         _delay_us(30);  // without this wait read unstable value.
         matrix_row_t cols = read_cols();
-        if (matrix_debouncing[i] != cols) {
-            matrix_debouncing[i] = cols;
+        if (matrix_debouncing[i+offset] != cols) {
+            matrix_debouncing[i+offset] = cols;
             if (debouncing) {
                 debug("bounce!: "); debug_hex(debouncing); debug("\n");
             }
@@ -117,7 +120,7 @@ uint8_t _matrix_scan(void)
             _delay_ms(1);
         } else {
             for (uint8_t i = 0; i < ROWS_PER_HAND; i++) {
-                matrix[i] = matrix_debouncing[i];
+                matrix[i+offset] = matrix_debouncing[i+offset];
             }
         }
     }
@@ -129,6 +132,9 @@ uint8_t _matrix_scan(void)
 uint8_t matrix_scan(void)
 {
     int ret = _matrix_scan();
+
+
+    int slaveOffset = (isLeftHand) ? (ROWS_PER_HAND) : 0;
 
 #ifdef USE_I2C
     // Get rows from other half over i2c
@@ -144,10 +150,11 @@ uint8_t matrix_scan(void)
         // turn off the indicator led on no error
         PORTD |= (1<<5);
 
-        matrix[4] = i2c_master_read(I2C_ACK);
-        matrix[5] = i2c_master_read(I2C_ACK);
-        matrix[6] = i2c_master_read(I2C_ACK);
-        matrix[7] = i2c_master_read(I2C_NACK);
+        int i;
+        for (i = 0; i < ROWS_PER_HAND-1; ++i) {
+            matrix[slaveOffset+i] = i2c_master_read(I2C_ACK);
+        }
+        matrix[slaveOffset+i] = i2c_master_read(I2C_NACK);
         i2c_master_stop();
     } else {
 i2c_error: // the cable is disconnceted, or something else went wrong
@@ -159,28 +166,26 @@ i2c_error: // the cable is disconnceted, or something else went wrong
         PORTD &= ~(1<<5);
 
         // if we cannot communicate with the other half, then unset all of its keys
-        matrix[4] = 0;
-        matrix[5] = 0;
-        matrix[6] = 0;
-        matrix[7] = 0;
+        for (int i = 0; i < ROWS_PER_HAND; ++i) {
+            matrix[slaveOffset+i] = 0;
+        }
     }
 #else
     if( serial_transaction() ) {
         // turn on the indicator led
         PORTD &= ~(1<<5);
         // if we cannot communicate with the other half, then unset all of its keys
-        matrix[4] = 0;
-        matrix[5] = 0;
-        matrix[6] = 0;
-        matrix[7] = 0;
+        for (int i = 0; i < ROWS_PER_HAND; ++i) {
+            matrix[slaveOffset+i] = 0;
+        }
     } else {
         // turn off the indicator led on no error
         PORTD |= (1<<5);
         // no error
-        matrix[4] = serial_slave_buffer[0];
-        matrix[5] = serial_slave_buffer[1];
-        matrix[6] = serial_slave_buffer[2];
-        matrix[7] = serial_slave_buffer[3];
+
+        for (int i = 0; i < ROWS_PER_HAND; ++i) {
+            matrix[slaveOffset+i] = serial_slave_buffer[i];
+        }
     }
 #endif
 
@@ -190,10 +195,11 @@ i2c_error: // the cable is disconnceted, or something else went wrong
 void matrix_slave_scan(void) {
     int ret = _matrix_scan();
 
-    serial_slave_buffer[0] = matrix[0];
-    serial_slave_buffer[1] = matrix[1];
-    serial_slave_buffer[2] = matrix[2];
-    serial_slave_buffer[3] = matrix[3];
+    int offset = (isLeftHand) ? 0 : (MATRIX_ROWS / 2);
+
+    for (int i = 0; i < ROWS_PER_HAND; ++i) {
+        serial_slave_buffer[i] = matrix[offset+i];
+    }
 }
 
 bool matrix_is_modified(void)

@@ -53,6 +53,7 @@ SRC =	keymap.c \
 	i2c-master.c \
 	i2c-slave.c \
 	serial.c \
+	c44-util.c \
 	main.c \
 	led.c
 	# main.cpp \
@@ -113,7 +114,7 @@ OPT_DEFS += -DBOOTLOADER_SIZE=4096
 # Build Options
 #   comment out to disable the options.
 #
-BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
+#BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
 #MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
 EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
 #CONSOLE_ENABLE = yes	# Console for debug(+400)
@@ -135,3 +136,11 @@ include $(TMK_DIR)/common.mk
 include $(TMK_DIR)/protocol.mk
 include $(TMK_DIR)/protocol/lufa.mk
 include $(TMK_DIR)/rules.mk
+
+eeprom-left:
+	sleep 3; avrdude -p atmega32u4 -P /dev/ttyACM0 -c avr109 -U eeprom:w:$(TARGET)-left.eep
+
+eeprom-right:
+	sleep 3; avrdude -p atmega32u4 -P /dev/ttyACM0 -c avr109 -U eeprom:w:$(TARGET)-right.eep
+
+
