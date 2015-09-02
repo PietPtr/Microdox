@@ -30,17 +30,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = { */
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* 0: qwerty */
+    // qwfpg jluy;
+    // arstd hneio
+    // zxcvb km,./
+
+    // qwfdk jluy;
+    // arstg bnhio
+    // zvcpx -m,./
+    //   _     e
     KEYMAP(
         /* left hand */
-           FN6  , Q   , W    , E    , R    , T    ,
-           FN5  , A   , S    , D    , F    , G    ,
-           LALT , Z   , X    , C    , V    , B    ,
+           FN6  , Q   , W    , F    , D    , K    ,
+           FN5  , A   , R    , S    , T    , G    ,
+           LALT , Z   , V    , C    , P    , X    ,
            NO   , FN2 , FN1  , SPC  , LCTL ,
         /* right hand */
-           Y    , U   , I    , O    , P    , MINS ,
-           H    , J   , K    , L    , SCLN , QUOT ,
-           N    , M   , COMM , DOT  , SLSH , ENT  ,
-           BSPC , FN3 , FN0  , RGUI , NO
+           J    , L   , U    , Y    , SCLN , BSPC    ,
+           B    , N   , H    , I    , O    , QUOT ,
+           MINS , M   , COMM , DOT  , SLSH , ENT  ,
+           /* BSPC , FN3 , FN0  , RGUI , NO */
+           FN3 , E, FN0  , RGUI , NO
         )
     , /* 1: symbol */
     KEYMAP_NO_PREFIX(
@@ -63,10 +72,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
            KC_TRNS       , KC_F1         , KC_F2         , KC_F3          , KC_F4       , KC_F5     ,
            KC_TRNS       , KC_TRNS       , KC_TRNS       , KC_TRNS        , KC_TRNS     ,
         /* right hand */
-           CTRL(KC_PGUP)   , CTRL(KC_HOME) , CTRL(KC_UP)   , CTRL(KC_END)   , CTRL(KC_DEL)  , KC_F12  ,
+           CTRL(KC_PGUP)   , CTRL(KC_HOME) , CTRL(KC_UP)   , CTRL(KC_END)   , CTRL(KC_DEL)   , KC_F12  ,
            CTRL(KC_PGDOWN) , CTRL(KC_LEFT) , CTRL(KC_DOWN) , CTRL(KC_RIGHT) , CTRL(KC_BSPC) , KC_F11  ,
            KC_F6           , KC_F7         , KC_F8         , KC_F9          , KC_F10        , KC_TRNS ,
-           KC_TRNS         , KC_TRNS       , KC_TRNS       , KC_TRNS        , KC_TRNS
+           KC_TRNS         , KC_BSPC       , KC_TRNS       , KC_TRNS        , KC_TRNS
         )
     , /* 3: media */
     KEYMAP_NO_PREFIX(
