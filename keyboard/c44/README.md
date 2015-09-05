@@ -24,13 +24,13 @@ Required Hardware
 Apart from diodes and key switches for the keyboard matrix in each half, you
 will need:
 
-* 2 Arduino Pro Micro's. You find theses on aliexpress for about 3.50USD each.
+* 2 Arduino Pro Micro's. You can find theses on aliexpress for ≈3.50USD each.
 * 2 TRS sockets
 * 1 TRS cable.
 
 Alternatively, you can use any sort of cable and socket that has at least 3
 wires. If you want to use I2C interface to communicate between halves,
-you will need a cable with at least 4 wires and 4x 4.7Ω pull-up resistors.
+you will need a cable with at least 4 wires and 2x 4.7Ω pull-up resistors.
 
 Wiring
 ------
@@ -40,6 +40,18 @@ PD0 on the ATmega32u4) between the two pro micros.
 
 Then wire your key matrix to any of the remaining 17 IO pins of the pro micro
 and modify the `matrix.c` accordingly.
+
+Notes on Software Configuration
+-------------------------------
+
+Configuring the firmware is much the same as any other TMK project. One thing
+to note is that `MATIX_ROWS` in `config.h` is the total number of rows between
+the two halves, i.e. if your split keyboard has 4 rows in each half, then
+`MATRIX_ROWS=8`.
+
+Also, the current implementation assumes a maximum of 8 columns, but it would
+not be very difficult to adapt it to support more if required.
+
 
 Flashing
 --------
