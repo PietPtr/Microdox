@@ -1,6 +1,45 @@
 Custom spilt keyboard firmware
 ======
 
+Split keyboard firmware for Arduino Pro Micro or other ATmega32u4
+based boards.
+
+
+Features
+--------
+
+Some features supported by the firmware:
+
+* Either half can be used to connect to the computer via USB, or you can even
+  use both halves individually.
+* You only need 3 wires to connect the two halves. Two for VCC and GND and one
+  for serial communication.
+* Optional support for I2C connection between the two halves if for some
+  reason you require a faster connection between the two halves. Note this
+  requires an extra wire between halves and pull-up resistors on the data lines.
+
+Required Hardware
+-----------------
+
+Apart from diodes and key switches for the keyboard matrix in each half, you
+will need:
+
+* 2 Arduino Pro Micro's. You find theses on aliexpress for about 3.50USD each.
+* 2 TRS sockets
+* 1 TRS cable.
+
+Alternatively, you can use any sort of cable and socket that has at least 3
+wires. If you want to use I2C interface to communicate between halves,
+you will need a cable with at least 4 wires and 4x 4.7Ω pull-up resistors.
+
+Wiring
+------
+
+The 3 wires of the TRS cable need to connect GND, VCC, and digital pin 3 (i.e.
+PD0 on the ATmega32u4) between the two pro micros.
+
+Then wire your key matrix to any of the remaining 17 IO pins of the pro micro
+and modify the `matrix.c` accordingly.
 
 Flashing
 --------
