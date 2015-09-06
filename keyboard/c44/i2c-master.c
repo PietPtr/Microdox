@@ -7,13 +7,13 @@
 //
 // (F_CPU/SCL_CLOCK)  =>  # of μC cycles to transfer a bit
 // poll loop takes at least 8 clock cycles to execute
-#define I2C_LOOP_TIMOUT (9+1)*(F_CPU/SCL_CLOCK)/8
+#define I2C_LOOP_TIMEOUT (9+1)*(F_CPU/SCL_CLOCK)/8
 
 // Wait for an i2c operation to finish
 inline static
 void i2c_delay(void) {
   uint16_t lim = 0;
-  while(!(TWCR & (1<<TWINT)) && lim < I2C_LOOP_TIMOUT)
+  while(!(TWCR & (1<<TWINT)) && lim < I2C_LOOP_TIMEOUT)
     lim++;
 
   // easier way, but will wait slightly longer
@@ -59,7 +59,7 @@ void i2c_master_stop(void) {
   TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO);
 
   uint16_t lim = 0;
-  while(!(TWCR & (1<<TWSTO)) && lim < I2C_LOOP_TIMOUT)
+  while(!(TWCR & (1<<TWSTO)) && lim < I2C_LOOP_TIMEOUT)
     lim++;
 }
 

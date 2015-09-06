@@ -1,4 +1,4 @@
-Custom spilt keyboard firmware
+Custom split keyboard firmware
 ======
 
 Split keyboard firmware for Arduino Pro Micro or other ATmega32u4
@@ -10,8 +10,8 @@ Features
 
 Some features supported by the firmware:
 
-* Either half can be used to connect to the computer via USB, or you can even
-  use both halves individually.
+* Either half can connect to the computer via USB, or both halves can be used
+  independently.
 * You only need 3 wires to connect the two halves. Two for VCC and GND and one
   for serial communication.
 * Optional support for I2C connection between the two halves if for some
@@ -29,14 +29,14 @@ will need:
 * 1 TRS cable.
 
 Alternatively, you can use any sort of cable and socket that has at least 3
-wires. If you want to use I2C interface to communicate between halves,
-you will need a cable with at least 4 wires and 2x 4.7Ω pull-up resistors.
+wires. If you want to use I2C to communicate between halves, you will need a
+cable with at least 4 wires and 2x 4.7Ω pull-up resistors.
 
 Wiring
 ------
 
 The 3 wires of the TRS cable need to connect GND, VCC, and digital pin 3 (i.e.
-PD0 on the ATmega32u4) between the two pro micros.
+PD0 on the ATmega32u4) between the two Pro Micros.
 
 Then wire your key matrix to any of the remaining 17 IO pins of the pro micro
 and modify the `matrix.c` accordingly.
@@ -44,12 +44,12 @@ and modify the `matrix.c` accordingly.
 Notes on Software Configuration
 -------------------------------
 
-Configuring the firmware is much the same as any other TMK project. One thing
+Configuring the firmware is similar to any other TMK project. One thing
 to note is that `MATIX_ROWS` in `config.h` is the total number of rows between
 the two halves, i.e. if your split keyboard has 4 rows in each half, then
 `MATRIX_ROWS=8`.
 
-Also, the current implementation assumes a maximum of 8 columns, but it would
+Also the current implementation assumes a maximum of 8 columns, but it would
 not be very difficult to adapt it to support more if required.
 
 
