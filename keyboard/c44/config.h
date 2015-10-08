@@ -54,6 +54,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define KEYCODE_16_BIT
 
+/* max value on report descriptor */
+/* #define MOUSEKEY_MOVE_MAX       127 */
+/* #define MOUSEKEY_WHEEL_MAX      127 */
+/* #define MOUSEKEY_MOVE_DELTA     5 */
+/* #define MOUSEKEY_WHEEL_DELTA    1 */
+/* #define MOUSEKEY_DELAY 300 */
+/* #define MOUSEKEY_INTERVAL 50 */
+#define MOUSEKEY_MAX_SPEED 5 /* default 10 */
+#define MOUSEKEY_TIME_TO_MAX 10 /* default 20 */
+/* #define MOUSEKEY_WHEEL_MAX_SPEED 8 */
+/* #define MOUSEKEY_WHEEL_TIME_TO_MAX 40 */
+
 /* disable debug print */
 //#define NO_DEBUG
 
