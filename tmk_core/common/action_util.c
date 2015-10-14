@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "report.h"
 #include "debug.h"
 #include "action_util.h"
+#include "action_layer.h"
 #include "timer.h"
 
 static inline void add_key_byte(uint8_t code);
@@ -51,56 +52,94 @@ static int16_t oneshot_time = 0;
 #endif
 #endif
 
+/* oneshot layer */
+#ifndef NO_ACTION_ONESHOT
+/* oneshot_layer_data bits
+* 0LLL LLSS
+* where:
+*   L => are layer bits
+*   S => oneshot state bits
+*/
+static int8_t oneshot_layer_data = 0;
+
+static inline uint8_t get_oneshot_layer(void)
+{
+    return oneshot_layer_data >> 2;
+}
+static inline uint8_t get_oneshot_layer_state(void)
+{
+    return oneshot_layer_data & 0b11;
+}
+
+#if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
+static int16_t oneshot_layer_time = 0;
+#endif
+#endif
 
 void send_keyboard_report(void) {
-    keyboard_report->mods  = real_mods;
-    keyboard_report->mods |= weak_mods;
+keyboard_report->mods  = real_mods;
+keyboard_report->mods |= weak_mods;
 #ifndef NO_ACTION_ONESHOT
-    if (oneshot_mods) {
+if (oneshot_mods) {
 #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
-        if (TIMER_DIFF_16(timer_read(), oneshot_time) >= ONESHOT_TIMEOUT) {
-            dprintf("Oneshot: timeout\n");
-            clear_oneshot_mods();
-        }
-#endif
-        keyboard_report->mods |= oneshot_mods;
-        if (has_anykey()) {
-            clear_oneshot_mods();
-        }
+    if (TIMER_DIFF_16(timer_read(), oneshot_time) >= ONESHOT_TIMEOUT) {
+        dprintf("Oneshot: timeout\n");
+        clear_oneshot_mods();
     }
 #endif
-    host_keyboard_send(keyboard_report);
+    keyboard_report->mods |= oneshot_mods;
+    if (has_anykey()) {
+        clear_oneshot_mods();
+    }
+}
+
+/* TODO:  add oneshot layer timeout */
+/* oneshot layer code */
+/* if (is_oneshot_layer_active()) { */
+/* #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0)) */
+/*     if (TIMER_DIFF_16(timer_read(), oneshot_layer_time) >= ONESHOT_TIMEOUT) { */
+/*         dprintf("Oneshot layer: timeout\n"); */
+/*         clear_oneshot_layer(); */
+/*     } */
+/* #endif */
+/*     /1* if (has_anykey()) { *1/ */
+/*     /1*     clear_oneshot_layer(); *1/ */
+/*     /1* } *1/ */
+/* } */
+
+#endif
+host_keyboard_send(keyboard_report);
 }
 
 /* key */
 void add_key(uint8_t key)
 {
 #ifdef NKRO_ENABLE
-    if (keyboard_protocol && keyboard_nkro) {
-        add_key_bit(key);
-        return;
-    }
+if (keyboard_protocol && keyboard_nkro) {
+    add_key_bit(key);
+    return;
+}
 #endif
-    add_key_byte(key);
+add_key_byte(key);
 }
 
 void del_key(uint8_t key)
 {
 #ifdef NKRO_ENABLE
-    if (keyboard_protocol && keyboard_nkro) {
-        del_key_bit(key);
-        return;
-    }
+if (keyboard_protocol && keyboard_nkro) {
+    del_key_bit(key);
+    return;
+}
 #endif
-    del_key_byte(key);
+del_key_byte(key);
 }
 
 void clear_keys(void)
 {
-    // not clear mods
-    for (int8_t i = 1; i < KEYBOARD_REPORT_SIZE; i++) {
-        keyboard_report->raw[i] = 0;
-    }
+// not clear mods
+for (int8_t i = 1; i < KEYBOARD_REPORT_SIZE; i++) {
+    keyboard_report->raw[i] = 0;
+}
 }
 
 
@@ -122,17 +161,43 @@ void clear_weak_mods(void) { weak_mods = 0; }
 #ifndef NO_ACTION_ONESHOT
 void set_oneshot_mods(uint8_t mods)
 {
-    oneshot_mods = mods;
+oneshot_mods = mods;
 #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
-    oneshot_time = timer_read();
+oneshot_time = timer_read();
 #endif
 }
 void clear_oneshot_mods(void)
 {
-    oneshot_mods = 0;
+oneshot_mods = 0;
 #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
-    oneshot_time = 0;
+oneshot_time = 0;
 #endif
+}
+#endif
+
+/* Oneshot layer */
+#ifndef NO_ACTION_ONESHOT
+void set_oneshot_layer(uint8_t layer)
+{
+    oneshot_layer_data = layer << 2 | 0b11;
+    layer_on(layer);
+#if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
+    oneshot_layer_time = timer_read();
+#endif
+}
+void clear_oneshot_layer(oneshot_fullfillment_t state)
+{
+    oneshot_layer_data &= ~state;
+    if (!get_oneshot_layer_state()) {
+        layer_off(get_oneshot_layer());
+    }
+#if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
+    oneshot_layer_time = 0;
+#endif
+}
+bool is_oneshot_layer_active(void)
+{
+    return get_oneshot_layer_state();
 }
 #endif
 

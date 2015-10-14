@@ -4,8 +4,7 @@ Copyright 2012,2013 Jun Wako <wakojun@gmail.com>
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
-(at your option) any later version.
-
+(at your option) any later version.  
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -51,10 +50,18 @@ void action_exec(keyevent_t event)
         dprint("processed: "); debug_record(record); dprintln();
     }
 #endif
+
+}
+
+static bool is_oneshot_event(action_t action)
+{
+    return (action.kind.id == ACT_LAYER_TAP || action.kind.id == ACT_LAYER_TAP_EXT) &&
+          action.layer_tap.code != OP_ONESHOT;
 }
 
 void process_action(keyrecord_t *record)
 {
+    bool do_release_oneshot = false;
     keyevent_t event = record->event;
 #ifndef NO_ACTION_TAPPING
     uint8_t tap_count = record->tap.count;
@@ -69,6 +76,14 @@ void process_action(keyrecord_t *record)
     dprint(" default_layer_state: "); default_layer_debug();
 #endif
     dprintln();
+
+
+#ifndef NO_ACTION_ONESHOT
+    if (is_oneshot_layer_active() && event.pressed && !is_oneshot_event(action)) {
+        clear_oneshot_layer(ONESHOT_OTHER_KEY_PRESSED);
+        do_release_oneshot = !is_oneshot_layer_active();
+    }
+#endif
 
     switch (action.kind.id) {
         /* Key and Mods */
@@ -271,6 +286,17 @@ void process_action(keyrecord_t *record)
                     event.pressed ? layer_move(action.layer_tap.val) :
                                     layer_clear();
                     break;
+            #ifndef NO_ACTION_ONESHOT
+                case OP_ONESHOT:
+                    // Oneshot modifier
+                    if (event.pressed && tap_count == 0) {
+                        layer_on(action.layer_tap.val);
+                        set_oneshot_layer(action.layer_tap.val);
+                    } else {
+                        clear_oneshot_layer(ONESHOT_RELEASED);
+                    }
+                    break;
+            #endif
                 default:
                     /* tap key */
                     if (event.pressed) {
@@ -333,6 +359,11 @@ void process_action(keyrecord_t *record)
 #endif
         default:
             break;
+    }
+
+    if (do_release_oneshot) {
+        /* unregister_code(action.key.code); */
+        clear_keyboard();
     }
 }
 

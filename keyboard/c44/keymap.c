@@ -28,7 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "keymap_common.h"
 
 
-/* const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = { */
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* 0: qwerty */
     KEYMAP(
@@ -36,12 +35,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
            FN7   , Q   , W    , E    , R    , T    ,
            FN6   , A   , S    , D    , F    , G    ,
            LALT  , Z   , X    , C    , V    , B    ,
-           FN15  , FN3 , LCTL , SPC  , FN2  ,
+           FN16  , FN3 , LCTL , SPC  , FN2  ,
         /* right hand */
            Y    , U   , I    , O    , P    , MINS ,
            H    , J   , K    , L    , SCLN , QUOT ,
            N    , M   , COMM , DOT  , SLSH , ESC  ,
-           BSPC , FN4 , FN1  , LGUI , FN15
+           BSPC , FN4 , FN17   , LGUI , FN16
         )
     , /* 1: dvorak */
     KEYMAP(
@@ -85,8 +84,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     , /* 4: fn */
     KEYMAP_NO_PREFIX(
         /* left hand */
-           KC_INS        , KC_DEL        , KC_HOME       , KC_UP          , KC_END      , KC_PGUP   ,
-           KC_BSPC       , KC_ESC        , KC_LEFT       , KC_DOWN        , KC_RIGHT    , KC_PGDOWN ,
+           KC_INS        , KC_BSPC       , KC_HOME       , KC_UP          , KC_END      , KC_PGUP   ,
+           KC_DEL        , KC_ESC        , KC_LEFT       , KC_DOWN        , KC_RIGHT    , KC_PGDOWN ,
            KC_TRNS       , KC_F1         , KC_F2         , KC_F3          , KC_F4       , KC_F5     ,
            KC_TRNS       , KC_TRNS       , KC_TRNS       , KC_TRNS        , KC_TRNS     ,
         /* right hand */
@@ -98,14 +97,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     , /* 5: media */
     KEYMAP_NO_PREFIX(
         /* left hand */
-           ALT(KC_TAB)        , KC_PSCR       , 164        , KC__VOLUP   , KC_STOP      , KC_F11        ,
-           SHIFT(ALT(KC_TAB)) , KC__MUTE      , KC_MNXT    , KC__VOLDOWN , KC_MPRV      , KC_APP        ,
+           ALT(KC_TAB)        , KC_PSCR       , KC_MPLY    , KC__VOLUP   , KC_STOP      , KC_F11        ,
+           SHIFT(ALT(KC_TAB)) , KC__MUTE      , KC_MPRV    , KC__VOLDOWN , KC_MNXT      , KC_APP        ,
            KC_LGUI            , CTRL(KC_Y)    , CTRL(KC_B) , CTRL(KC_I)  , CTRL(KC_DOT) , CTRL(KC_SCLN) ,
            KC_TRNS            , KC_TRNS       , KC_TRNS    , KC_TRNS     , KC_TRNS      ,
         /* right hand */
-           KC_FN12 , KC_BTN1 , KC_MS_U , KC_BTN2 , KC_NO   , KC_NO  ,
-           KC_FN13 , KC_MS_L , KC_MS_D , KC_MS_R , KC_NO   , KC_NO  ,
-           KC_FN14 , KC_FN8  , KC_FN12 , KC_NO   , KC_NO   , KC_FN0 ,
+           KC_WH_U , KC_BTN1 , KC_MS_U , KC_BTN2 , KC_NO   , KC_NO  ,
+           KC_WH_D , KC_MS_L , KC_MS_D , KC_MS_R , KC_NO   , KC_NO  ,
+           KC_FN12 , KC_FN13 , KC_FN14 , KC_FN15   , KC_NO   , KC_FN0 ,
            KC_TRNS , KC_TRNS , KC_TRNS , KC_TRNS , KC_TRNS
         )
     , /* 6: mirrored - L0 */
@@ -114,12 +113,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
            MINS , P    , O    , I    , U    , Y    ,
            QUOT , SCLN , L    , K    , J    , H    ,
            FN0  , SLSH , DOT  , COMM , M    , N    ,
-           FN15 , RGUI  , FN9  , FN4  , BSPC  ,
+           FN16 , RGUI  , FN9  , FN4  , BSPC  ,
         /* right hand */
            T    , R   , E    , W    , Q    , FN7 ,
            G    , F   , D    , S    , A    , FN6 ,
            B    , V   , C    , X    , Z , LALT  ,
-           FN10  , SPC , LCTL , FN11 , FN15
+           FN10  , SPC , LCTL , FN11 , FN16
         )
     , /* 7: mirrored - L1 */
     KEYMAP_NO_PREFIX(
@@ -165,11 +164,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         /*    KC_LGUI            , CTRL(KC_SLSH) , CTRL(KC_B) , CTRL(KC_I)  , CTRL(KC_DOT) , CTRL(KC_SCLN) , */
         /*    KC_TRNS            , KC_TRNS       , KC_TRNS    , KC_TRNS     , KC_TRNS      , */
         /* right hand */
-           KC_F11  , KC_STOP , KC__VOLUP   , 164     , KC_PSCR  , KC_NO ,
+           KC_F11  , KC_STOP , KC__VOLUP   , KC_MPLY , KC_PSCR  , KC_NO ,
            KC_APP  , KC_MPRV , KC__VOLDOWN , KC_MNXT , KC__MUTE , KC_NO ,
            KC_NO   , KC_NO   , KC_NO       , KC_NO   , KC_NO    , KC_NO ,
            KC_TRNS , KC_TRNS , KC_TRNS     , KC_TRNS , KC_TRNS
         )
+    , /* 10:  */
+        KEYMAP(
+            /* left hand */
+            FN7   , Q   , W    , E    , R    , T    ,
+            FN6   , Z   , X    , Z    , X    , G    ,
+            LALT  , Z   , X    , C    , V    , B    ,
+            FN16  , FN3 , LCTL , Z  , FN2    ,
+            /* right hand */
+            Y    , U   , I    , O    , P    , MINS ,
+            H    , X   , Z    , X    , Z    , QUOT ,
+            N    , M   , COMM , DOT  , SLSH , FN0  ,
+            BSPC , Z , FN1  , LGUI , FN16
+            )
 };
 
 /*
@@ -193,5 +205,7 @@ const uint16_t PROGMEM fn_actions[] = {
     ACTION_DEFAULT_LAYER_SET(0), // FN12 Switch base layer to Qwerty
     ACTION_DEFAULT_LAYER_SET(1), // FN13 Switch base layer to Dvorak
     ACTION_DEFAULT_LAYER_SET(2), // FN14 Switch base layer to Colemak
-    ACTION_LAYER_TOGGLE(6), // FN15 (mirrored)
+    ACTION_LAYER_TOGGLE(10), // FN15
+    ACTION_LAYER_TOGGLE(6), // FN16 (mirrored)
+    ACTION_LAYER_ONESHOT(3), // FN17 (L1 oneshot)
 };

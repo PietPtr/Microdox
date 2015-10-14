@@ -54,6 +54,14 @@ void oneshot_toggle(void);
 void oneshot_enable(void);
 void oneshot_disable(void);
 
+typedef enum {
+  ONESHOT_RELEASED = 0b01,
+  ONESHOT_OTHER_KEY_PRESSED = 0b10
+} oneshot_fullfillment_t;
+void set_oneshot_layer(uint8_t layer);
+void clear_oneshot_layer(oneshot_fullfillment_t state);
+bool is_oneshot_layer_active(void);
+
 /* inspect */
 uint8_t has_anykey(void);
 uint8_t has_anymod(void);
