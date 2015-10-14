@@ -55,7 +55,7 @@ static int16_t oneshot_time = 0;
 /* oneshot layer */
 #ifndef NO_ACTION_ONESHOT
 /* oneshot_layer_data bits
-* 0LLL LLSS
+* LLLL LSSS
 * where:
 *   L => are layer bits
 *   S => oneshot state bits
@@ -64,11 +64,11 @@ static int8_t oneshot_layer_data = 0;
 
 static inline uint8_t get_oneshot_layer(void)
 {
-    return oneshot_layer_data >> 2;
+    return oneshot_layer_data >> 3;
 }
-static inline uint8_t get_oneshot_layer_state(void)
+inline uint8_t get_oneshot_layer_state(void)
 {
-    return oneshot_layer_data & 0b11;
+    return oneshot_layer_data & 0b111;
 }
 
 #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
@@ -99,11 +99,11 @@ if (oneshot_mods) {
 /* #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0)) */
 /*     if (TIMER_DIFF_16(timer_read(), oneshot_layer_time) >= ONESHOT_TIMEOUT) { */
 /*         dprintf("Oneshot layer: timeout\n"); */
-/*         clear_oneshot_layer(); */
+/*         clear_oneshot_layer_state(); */
 /*     } */
 /* #endif */
 /*     /1* if (has_anykey()) { *1/ */
-/*     /1*     clear_oneshot_layer(); *1/ */
+/*     /1*     clear_oneshot_layer_state(); *1/ */
 /*     /1* } *1/ */
 /* } */
 
@@ -177,18 +177,25 @@ oneshot_time = 0;
 
 /* Oneshot layer */
 #ifndef NO_ACTION_ONESHOT
-void set_oneshot_layer(uint8_t layer)
+void set_oneshot_layer(uint8_t layer, uint8_t state)
 {
-    oneshot_layer_data = layer << 2 | 0b11;
+    oneshot_layer_data = layer << 3 | state;
     layer_on(layer);
 #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
     oneshot_layer_time = timer_read();
 #endif
 }
-void clear_oneshot_layer(oneshot_fullfillment_t state)
+void reset_oneshot_layer(void) {
+    oneshot_layer_data = 0;
+#if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
+    oneshot_layer_time = 0;
+#endif
+}
+void clear_oneshot_layer_state(oneshot_fullfillment_t state)
 {
+    uint8_t start_state = oneshot_layer_data;
     oneshot_layer_data &= ~state;
-    if (!get_oneshot_layer_state()) {
+    if (!get_oneshot_layer_state() && start_state != oneshot_layer_data) {
         layer_off(get_oneshot_layer());
     }
 #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))

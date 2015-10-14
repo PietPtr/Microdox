@@ -55,12 +55,16 @@ void oneshot_enable(void);
 void oneshot_disable(void);
 
 typedef enum {
-  ONESHOT_RELEASED = 0b01,
-  ONESHOT_OTHER_KEY_PRESSED = 0b10
+  ONESHOT_PRESSED = 0b01,
+  ONESHOT_OTHER_KEY_PRESSED = 0b10,
+  ONESHOT_START = 0b11,
+  ONESHOT_TOGGLED = 0b100
 } oneshot_fullfillment_t;
-void set_oneshot_layer(uint8_t layer);
-void clear_oneshot_layer(oneshot_fullfillment_t state);
+void set_oneshot_layer(uint8_t layer, uint8_t state);
+void clear_oneshot_layer_state(oneshot_fullfillment_t state);
+void reset_oneshot_layer(void);
 bool is_oneshot_layer_active(void);
+uint8_t get_oneshot_layer_state(void);
 
 /* inspect */
 uint8_t has_anykey(void);

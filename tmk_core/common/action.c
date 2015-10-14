@@ -80,7 +80,7 @@ void process_action(keyrecord_t *record)
 
 #ifndef NO_ACTION_ONESHOT
     if (is_oneshot_layer_active() && event.pressed && !is_oneshot_event(action)) {
-        clear_oneshot_layer(ONESHOT_OTHER_KEY_PRESSED);
+        clear_oneshot_layer_state(ONESHOT_OTHER_KEY_PRESSED);
         do_release_oneshot = !is_oneshot_layer_active();
     }
 #endif
@@ -289,11 +289,23 @@ void process_action(keyrecord_t *record)
             #ifndef NO_ACTION_ONESHOT
                 case OP_ONESHOT:
                     // Oneshot modifier
-                    if (event.pressed && tap_count == 0) {
-                        layer_on(action.layer_tap.val);
-                        set_oneshot_layer(action.layer_tap.val);
+                    if (event.pressed) {
+                        if (get_oneshot_layer_state() == ONESHOT_TOGGLED) {
+                            reset_oneshot_layer();
+                            layer_off(action.layer_tap.val);
+                            break;
+                        }
+                        if (tap_count < TAPPING_TOGGLE) {
+                            layer_on(action.layer_tap.val);
+                            set_oneshot_layer(action.layer_tap.val, ONESHOT_START);
+                        }
                     } else {
-                        clear_oneshot_layer(ONESHOT_RELEASED);
+                        if (tap_count >= TAPPING_TOGGLE) {
+                            reset_oneshot_layer();
+                            set_oneshot_layer(action.layer_tap.val, ONESHOT_TOGGLED);
+                        } else {
+                            clear_oneshot_layer_state(ONESHOT_PRESSED);
+                        }
                     }
                     break;
             #endif
@@ -361,9 +373,14 @@ void process_action(keyrecord_t *record)
             break;
     }
 
-    if (do_release_oneshot) {
-        /* unregister_code(action.key.code); */
-        clear_keyboard();
+    /* Because we switch layers after a oneshot event, we need to release the
+     * key. If we don't, we will switch layers and the corret key up event will 
+     * not be generated for the oneshot key event.
+     */
+    if (do_release_oneshot && !(get_oneshot_layer_state() & ONESHOT_PRESSED )   ) {
+        clear_weak_mods();
+        unregister_mods(action.key.mods);
+        unregister_code(action.key.code);
     }
 }
 
@@ -552,6 +569,7 @@ bool is_tap_key(keypos_t key)
             switch (action.layer_tap.code) {
                 case 0x00 ... 0xdf:
                 case OP_TAP_TOGGLE:
+                case OP_ONESHOT:
                     return true;
             }
             return false;
