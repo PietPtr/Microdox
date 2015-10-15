@@ -155,5 +155,3 @@ eeprom-left:
 
 eeprom-right:
 	sleep 3; avrdude -p atmega32u4 -P /dev/ttyACM0 -c avr109 -U eeprom:w:$(TARGET)-right.eep
-
-

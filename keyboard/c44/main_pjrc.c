@@ -37,14 +37,22 @@
 #include "host.h"
 #include "pjrc.h"
 
+#include "keyboard.h"
+#include "wait.h"
+#include "c44-util.h"
 
 #define CPU_PRESCALE(n)    (CLKPR = 0x80, CLKPR = (n))
 
-__attribute__ ((weak))
 int main(void)
 {
     // set for 16 MHz clock
     CPU_PRESCALE(0);
+
+    setup_hardware();
+
+    if (!has_usb()) {
+        keyboard_slave_loop();
+    }
 
     keyboard_setup();
 
@@ -69,6 +77,6 @@ int main(void)
             }
         }
 
-        keyboard_task(); 
+        keyboard_task();
     }
 }

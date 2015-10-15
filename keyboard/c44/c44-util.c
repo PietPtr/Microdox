@@ -1,9 +1,11 @@
 #include <avr/io.h>
 #include <avr/wdt.h>
 #include <avr/power.h>
+#include <avr/interrupt.h>
 #include <util/delay.h>
 #include "c44-util.h"
-#include "lufa.h"
+#include "keyboard.h"
+
 
 bool EEMEM EEMEM_isLeftHand = true;
 extern bool isLeftHand = true;
@@ -19,16 +21,17 @@ void setup_hardware(void) {
     MCUSR &= ~(1 << WDRF);
     wdt_disable();
 
-    /* Disable clock division */
-    clock_prescale_set(clock_div_1);
+    setup_set_handedness();
+    sei();
+}
 
-    // Leonardo needs. Without this USB device is not recognized.
-    USB_Disable();
+void keyboard_slave_loop(void) {
+   matrix_init();
+   serial_slave_init();
 
-    USB_Init();
-
-    // for Console_Task
-    USB_Device_EnableSOFEvents();
+   while (1) {
+      matrix_slave_scan();
+   }
 }
 
 void setup_set_handedness(void) {

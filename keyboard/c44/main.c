@@ -3,15 +3,29 @@
 #include "wait.h"
 #include "c44-util.h"
 
-// slave version of matix scan, defined in matrix.c
-void matrix_slave_scan(void);
+void lufa_pre_setup(void) {
+    /* Disable clock division */
+    clock_prescale_set(clock_div_1);
+
+    // Leonardo needs. Without this USB device is not recognized.
+    USB_Disable();
+
+    USB_Init();
+
+    // for Console_Task
+    USB_Device_EnableSOFEvents();
+}
 
 int main(void)  __attribute__ ((weak));
 int main(void)
 {
+    lufa_pre_setup();
+
     setup_hardware();
-    setup_set_handedness();
-    sei();
+
+    if (!has_usb()) {
+        keyboard_slave_loop();
+    }
 
     /* wait for USB startup to get ready for debug output */
     uint8_t timeout = 200;  // timeout when USB is not available
@@ -22,17 +36,6 @@ int main(void)
 #else
         USB_USBTask();
 #endif
-    }
-
-    /* if (USB_DeviceState != DEVICE_STATE_Configured) { */
-    if (!has_usb()) {
-        // USB failed to connect, so run this device in slave mode.
-        matrix_init();
-        serial_slave_init();
-
-        while (1) {
-            matrix_slave_scan();
-        }
     }
 
     /* init modules */
@@ -51,3 +54,5 @@ int main(void)
 #endif
     }
 }
+
+
