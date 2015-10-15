@@ -35,12 +35,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
            FN7   , Q   , W    , E    , R    , T    ,
            FN6   , A   , S    , D    , F    , G    ,
            LALT  , Z   , X    , C    , V    , B    ,
-           FN16  , FN3 , LCTL , SPC  , FN2  ,
+           FN16  , FN3 , LCTL , SPC  , FN2 ,
         /* right hand */
            Y    , U   , I    , O    , P    , MINS ,
            H    , J   , K    , L    , SCLN , QUOT ,
            N    , M   , COMM , DOT  , SLSH , ESC  ,
-           BSPC , FN4 , FN17   , LGUI , FN16
+           BSPC , FN4 , FN1 , LGUI , FN16
         )
     , /* 1: dvorak */
     KEYMAP(
@@ -189,9 +189,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 const uint16_t PROGMEM fn_actions[] = {
     ACTION_LAYER_SET_CLEAR(0), // FN0 (L0)
-    ACTION_LAYER_TAP_TOGGLE(3), // FN1 (L1)
-    ACTION_LAYER_TAP_TOGGLE(4), // FN2 (fn)
-    ACTION_LAYER_TAP_TOGGLE(5), // FN3 (media)
+    ACTION_LAYER_ONESHOT(3), // FN1 (L1)
+    ACTION_LAYER_ONESHOT(4), // FN2 (fn)
+    ACTION_LAYER_ONESHOT(5), // FN3 (media)
 
     ACTION_MODS_ONESHOT(MOD_LSFT), // FN4 (sticky L shift)
     ACTION_MODS_ONESHOT(MOD_RSFT), // FN5 (sticky R shift)
@@ -208,4 +208,5 @@ const uint16_t PROGMEM fn_actions[] = {
     ACTION_LAYER_TOGGLE(10), // FN15
     ACTION_LAYER_TOGGLE(6), // FN16 (mirrored)
     ACTION_LAYER_ONESHOT(3), // FN17 (L1 oneshot)
+    ACTION_LAYER_ONESHOT(4), // FN18 (fn layer)
 };

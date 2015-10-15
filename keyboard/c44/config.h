@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VENDOR_ID       0xFEED
 #define PRODUCT_ID      0x4444
 #define DEVICE_VER      0x0001
-#define MANUFACTURER    testeed
+#define MANUFACTURER    testco
 #define PRODUCT         TODO
 #define DESCRIPTION     t.m.k. keyboard firmware for TODO
 
@@ -78,6 +78,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#define NO_ACTION_ONESHOT
 //#define NO_ACTION_MACRO
 //#define NO_ACTION_FUNCTION
+
+/* period of tapping(ms) */
+#define TAPPING_TERM    200 /* default 200 */
+
+/* tap count needed for toggling a feature */
+#define TAPPING_TOGGLE  2 /* default 5 */
 
 /* PS/2 mouse */
 #ifdef PS2_USE_BUSYWAIT
