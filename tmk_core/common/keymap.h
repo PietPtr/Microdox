@@ -43,11 +43,7 @@ keymap_config_t keymap_config;
 
 
 /* translates key to keycode */
-#ifdef KEYCODE_16_BIT
-uint16_t actionmap_key_to_action(uint8_t layer, keypos_t key);
-#else
 uint8_t keymap_key_to_keycode(uint8_t layer, keypos_t key);
-#endif
 
 /* translates Fn keycode to action */
 action_t keymap_fn_to_action(uint8_t keycode);

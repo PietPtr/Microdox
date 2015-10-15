@@ -77,21 +77,21 @@ static int16_t oneshot_layer_time = 0;
 #endif
 
 void send_keyboard_report(void) {
-keyboard_report->mods  = real_mods;
-keyboard_report->mods |= weak_mods;
+    keyboard_report->mods  = real_mods;
+    keyboard_report->mods |= weak_mods;
 #ifndef NO_ACTION_ONESHOT
-if (oneshot_mods) {
+    if (oneshot_mods) {
 #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
-    if (TIMER_DIFF_16(timer_read(), oneshot_time) >= ONESHOT_TIMEOUT) {
-        dprintf("Oneshot: timeout\n");
-        clear_oneshot_mods();
-    }
+        if (TIMER_DIFF_16(timer_read(), oneshot_time) >= ONESHOT_TIMEOUT) {
+            dprintf("Oneshot: timeout\n");
+            clear_oneshot_mods();
+        }
 #endif
-    keyboard_report->mods |= oneshot_mods;
-    if (has_anykey()) {
-        clear_oneshot_mods();
-    }
-}
+        keyboard_report->mods |= oneshot_mods;
+        if (has_anykey()) {
+            clear_oneshot_mods();
+        }
+    } 
 
 /* TODO:  add oneshot layer timeout */
 /* oneshot layer code */
@@ -108,38 +108,38 @@ if (oneshot_mods) {
 /* } */
 
 #endif
-host_keyboard_send(keyboard_report);
+    host_keyboard_send(keyboard_report);
 }
 
 /* key */
 void add_key(uint8_t key)
 {
 #ifdef NKRO_ENABLE
-if (keyboard_protocol && keyboard_nkro) {
-    add_key_bit(key);
-    return;
-}
+    if (keyboard_protocol && keyboard_nkro) {
+        add_key_bit(key);
+        return;
+    }
 #endif
-add_key_byte(key);
+    add_key_byte(key);
 }
 
 void del_key(uint8_t key)
 {
 #ifdef NKRO_ENABLE
-if (keyboard_protocol && keyboard_nkro) {
-    del_key_bit(key);
-    return;
-}
+    if (keyboard_protocol && keyboard_nkro) {
+        del_key_bit(key);
+        return;
+    }
 #endif
-del_key_byte(key);
+    del_key_byte(key);
 }
 
 void clear_keys(void)
 {
-// not clear mods
-for (int8_t i = 1; i < KEYBOARD_REPORT_SIZE; i++) {
-    keyboard_report->raw[i] = 0;
-}
+    // not clear mods
+    for (int8_t i = 1; i < KEYBOARD_REPORT_SIZE; i++) {
+        keyboard_report->raw[i] = 0;
+    }
 }
 
 
@@ -161,16 +161,16 @@ void clear_weak_mods(void) { weak_mods = 0; }
 #ifndef NO_ACTION_ONESHOT
 void set_oneshot_mods(uint8_t mods)
 {
-oneshot_mods = mods;
+    oneshot_mods = mods;
 #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
-oneshot_time = timer_read();
+    oneshot_time = timer_read();
 #endif
 }
 void clear_oneshot_mods(void)
 {
-oneshot_mods = 0;
+    oneshot_mods = 0;
 #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
-oneshot_time = 0;
+    oneshot_time = 0;
 #endif
 }
 #endif
