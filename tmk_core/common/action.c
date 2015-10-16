@@ -120,24 +120,33 @@ void process_action(keyrecord_t *record)
                         // Oneshot modifier
                         if (event.pressed) {
                             if (tap_count == 0) {
+                                dprint("MODS_TAP: Oneshot: 0\n");
                                 register_mods(mods);
-                            }
-                            else if (tap_count == 1) {
+                            } else if (tap_count == 1) {
                                 dprint("MODS_TAP: Oneshot: start\n");
                                 set_oneshot_mods(mods);
-                            }
-                            else {
+                            } else if (tap_count == TAPPING_TOGGLE) {
+                                dprint("MODS_TAP: Toggling oneshot");
+                                clear_oneshot_mods();
+                                set_oneshot_locked_mods(mods);
+                                register_mods(mods);
+                            } else {
                                 register_mods(mods);
                             }
                         } else {
                             if (tap_count == 0) {
                                 clear_oneshot_mods();
                                 unregister_mods(mods);
-                            }
-                            else if (tap_count == 1) {
+                            } else if (tap_count == 1) {
+                                if (mods & get_mods()) {
+                                    clear_oneshot_locked_mods();
+                                    clear_oneshot_mods();
+                                    unregister_mods(mods);
+                                }
                                 // Retain Oneshot mods
-                            }
-                            else {
+                            } else if (tap_count == TAPPING_TOGGLE) {
+                                // Toggle Oneshot Layer
+                            } else {
                                 clear_oneshot_mods();
                                 unregister_mods(mods);
                             }
@@ -291,6 +300,7 @@ void process_action(keyrecord_t *record)
                 case OP_ONESHOT:
                     // Oneshot modifier
                     if (event.pressed) {
+                        del_mods(get_oneshot_locked_mods());
                         if (get_oneshot_layer_state() == ONESHOT_TOGGLED) {
                             reset_oneshot_layer();
                             layer_off(action.layer_tap.val);
@@ -301,8 +311,11 @@ void process_action(keyrecord_t *record)
                             set_oneshot_layer(action.layer_tap.val, ONESHOT_START);
                         }
                     } else {
+                        add_mods(get_oneshot_locked_mods());
                         if (tap_count >= TAPPING_TOGGLE) {
                             reset_oneshot_layer();
+                            del_mods(get_oneshot_locked_mods());
+                            clear_oneshot_locked_mods();
                             set_oneshot_layer(action.layer_tap.val, ONESHOT_TOGGLED);
                         } else {
                             clear_oneshot_layer_state(ONESHOT_PRESSED);
@@ -379,7 +392,9 @@ void process_action(keyrecord_t *record)
      * not be generated for the oneshot key event.
      */
     if (do_release_oneshot && !(get_oneshot_layer_state() & ONESHOT_PRESSED )   ) {
-        clear_keyboard();
+        clear_mods();
+        add_mods(get_oneshot_locked_mods());
+        clear_keyboard_but_mods();
     }
 }
 

@@ -49,10 +49,15 @@ void clear_weak_mods(void);
 
 /* oneshot modifier */
 void set_oneshot_mods(uint8_t mods);
+uint8_t get_oneshot_mods(void);
 void clear_oneshot_mods(void);
 void oneshot_toggle(void);
 void oneshot_enable(void);
 void oneshot_disable(void);
+
+int8_t get_oneshot_locked_mods(void);
+void set_oneshot_locked_mods(int8_t mods);
+void clear_oneshot_locked_mods(void);
 
 typedef enum {
   ONESHOT_PRESSED = 0b01,

@@ -47,6 +47,10 @@ report_keyboard_t *keyboard_report = &(report_keyboard_t){};
 
 #ifndef NO_ACTION_ONESHOT
 static int8_t oneshot_mods = 0;
+static int8_t oneshot_locked_mods = 0;
+int8_t get_oneshot_locked_mods(void) { return oneshot_locked_mods; }
+void set_oneshot_locked_mods(int8_t mods) { oneshot_locked_mods = mods; }
+void clear_oneshot_locked_mods(void) { oneshot_locked_mods = 0; }
 #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
 static int16_t oneshot_time = 0;
 #endif
@@ -172,6 +176,10 @@ void clear_oneshot_mods(void)
 #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
     oneshot_time = 0;
 #endif
+}
+uint8_t get_oneshot_mods(void)
+{
+    return oneshot_mods;
 }
 #endif
 
