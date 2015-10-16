@@ -39,7 +39,7 @@
 #----------------------------------------------------------------------------
 
 # Target file name (without extension).
-TARGET = c44
+TARGET = split_keyboard
 
 # Directory common source filess exist
 TMK_DIR = ../../tmk_core
