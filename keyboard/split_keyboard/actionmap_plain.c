@@ -63,14 +63,14 @@ const uint16_t PROGMEM actionmaps[][MATRIX_ROWS][MATRIX_COLS] = {
    /* symbol */
    [3] = ACTIONMAP(
        /* left hand */
-           TRNS , GRV  , 2    , 3    , 4    , 5       ,
+           TRNS , COMM , 2    , 3    , 4    , 5       ,
            TRNS , 1    , BSLS , s(9) , LBRC , s(LBRC) ,
            TRNS , s(1) , s(2) , s(3) , s(4) , s(5)    ,
            TRNS , TRNS , TRNS , TRNS , TRNS ,
         /* right hand */
-           6       , 7    , 8    , 9      , DOT    , COMM ,
-           s(RBRC) , RBRC , s(0) , EQL    , 0      , MINS ,
-           s(6)    , s(7) , s(8) , s(EQL) , s(GRV) , FN0  ,
+           6       , 7    , 8    , 9      , DOT     , GRV    ,
+           s(RBRC) , RBRC , s(0) , EQL    , 0       , s(GRV) ,
+           s(6)    , s(7) , s(8) , s(EQL) , s(BSLS) , FN0    ,
            TRNS    , TRNS , TRNS , TRNS   , TRNS
     ),
     /* fn */
