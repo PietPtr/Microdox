@@ -19,8 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "stdint.h"
 #include "led.h"
 
-static int count = 0;
-
 void led_set(uint8_t usb_led)
 {
 }

@@ -2,7 +2,10 @@
  * WARNING: be careful changing this code, it is very timing dependent
  */
 
+#ifndef F_CPU
 #define F_CPU 16000000
+#endif
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
@@ -142,7 +145,7 @@ ISR(SERIAL_PIN_INTERRUPT) {
 // Returns:
 // 0 => no error
 // 1 => slave did not respond
-int serial_transaction(void) {
+int serial_update_buffers(void) {
   // this code is very time dependent, so we need to disable interrupts
   cli();
 

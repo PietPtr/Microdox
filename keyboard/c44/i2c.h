@@ -1,5 +1,5 @@
-#ifndef I2C_MASTER
-#define I2C_MASTER
+#ifndef I2C_H
+#define I2C_H
 
 #include <stdint.h>
 
@@ -13,13 +13,19 @@
 #define I2C_ACK 1
 #define I2C_NACK 0
 
+#define SLAVE_BUFFER_SIZE 0x10
+
 // i2c SCL clock frequency
 #define SCL_CLOCK  100000L
+
+extern volatile uint8_t slaveBuffer[SLAVE_BUFFER_SIZE];
 
 void i2c_master_init(void);
 uint8_t i2c_master_start(uint8_t address);
 void i2c_master_stop(void);
 uint8_t i2c_master_write(uint8_t data);
 uint8_t i2c_master_read(int);
+void i2c_reset_state(void);
+void i2c_slave_init(uint8_t address);
 
 #endif

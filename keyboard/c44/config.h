@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* key combination for command */
 #define IS_COMMAND() ( \
-    keyboard_report->mods == (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)) \
+    keyboard_report->mods == (MOD_BIT(KC_LCTL) | MOD_BIT(KC_LALT) | MOD_BIT(KC_LGUI)) \
 )
 
 /*
@@ -52,19 +52,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *  These options are also useful to firmware size reduction.
  */
 
-#define KEYCODE_16_BIT
+/* boot magic key */
+#define BOOTMAGIC_KEY_SALT              KC_SPC
 
-/* max value on report descriptor */
-/* #define MOUSEKEY_MOVE_MAX       127 */
-/* #define MOUSEKEY_WHEEL_MAX      127 */
-/* #define MOUSEKEY_MOVE_DELTA     5 */
-/* #define MOUSEKEY_WHEEL_DELTA    1 */
-/* #define MOUSEKEY_DELAY 300 */
-/* #define MOUSEKEY_INTERVAL 50 */
-#define MOUSEKEY_MAX_SPEED 5 /* default 10 */
-#define MOUSEKEY_TIME_TO_MAX 10 /* default 20 */
-/* #define MOUSEKEY_WHEEL_MAX_SPEED 8 */
-/* #define MOUSEKEY_WHEEL_TIME_TO_MAX 40 */
+#ifdef SPACE_ON_LEFT_HALF
+#define BOOTMAGIC_KEY_DEFAULT_LAYER_0   KC_Z
+#define BOOTMAGIC_KEY_DEFAULT_LAYER_1   KC_X
+#define BOOTMAGIC_KEY_DEFAULT_LAYER_2   KC_C
+#define BOOTMAGIC_HOST_NKRO             KC_V
+#else
+#define BOOTMAGIC_KEY_DEFAULT_LAYER_0   KC_M
+#define BOOTMAGIC_KEY_DEFAULT_LAYER_1   KC_COMM
+#define BOOTMAGIC_KEY_DEFAULT_LAYER_2   KC_DOT
+#define BOOTMAGIC_HOST_NKRO             KC_N
+#endif
+
+/* Mousekey settings */
+#define MOUSEKEY_MOVE_MAX          127 // default 127
+#define MOUSEKEY_WHEEL_MAX         127 // default 127
+#define MOUSEKEY_MOVE_DELTA        5   // default 5
+#define MOUSEKEY_WHEEL_DELTA       1   // default 1
+#define MOUSEKEY_DELAY             300 // default 300
+#define MOUSEKEY_INTERVAL          50  // default 50
+#define MOUSEKEY_MAX_SPEED         5   // default 10
+#define MOUSEKEY_TIME_TO_MAX       10  // default 20
+#define MOUSEKEY_WHEEL_MAX_SPEED   8   // default 8
+#define MOUSEKEY_WHEEL_TIME_TO_MAX 40  // default 40
 
 /* disable debug print */
 //#define NO_DEBUG
@@ -79,11 +92,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#define NO_ACTION_MACRO
 //#define NO_ACTION_FUNCTION
 
-/* period of tapping(ms) */
-#define TAPPING_TERM    200 /* default 200 */
-
-/* tap count needed for toggling a feature */
-#define TAPPING_TOGGLE  2 /* default 5 */
+/* Action tapping settings */
+#define TAPPING_TERM    200 // default 200
+#define TAPPING_TOGGLE  2   // default 5
 
 /* PS/2 mouse */
 #ifdef PS2_USE_BUSYWAIT
@@ -96,7 +107,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #   define PS2_DATA_DDR    DDRD
 #   define PS2_DATA_BIT    2
 #endif
-
 
 /* PS/2 mouse interrupt version */
 #ifdef PS2_USE_INT
@@ -122,7 +132,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 } while (0)
 #define PS2_INT_VECT    INT1_vect
 #endif
-
 
 /* PS/2 mouse USART version */
 #ifdef PS2_USE_USART

@@ -28,9 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "debug.h"
 #include "util.h"
 #include "matrix.h"
-#include "i2c-master.h"
+#include "i2c.h"
 #include "serial.h"
-#include "c44-util.h"
+#include "split-util.h"
+#include "pro-micro.h"
 
 #ifndef DEBOUNCE
 #   define DEBOUNCE	5
@@ -38,7 +39,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 static uint8_t debouncing = DEBOUNCE;
 static const int ROWS_PER_HAND = MATRIX_ROWS/2;
-static const uint8_t SLAVE_I2C_ADDRESS = 0x32;
 
 /* matrix state(1:on, 0:off) */
 static matrix_row_t matrix[MATRIX_ROWS];
@@ -61,6 +61,15 @@ uint8_t matrix_cols(void)
     return MATRIX_COLS;
 }
 
+// this code runs before the usb and keyboard is initialized
+void matrix_setup(void) {
+    split_keyboard_setup();
+
+    if (!has_usb()) {
+        keyboard_slave_loop();
+    }
+}
+
 void matrix_init(void)
 {
     debug_enable = true;
@@ -70,30 +79,13 @@ void matrix_init(void)
     unselect_rows();
     init_cols();
 
-#ifdef USE_I2C
-    i2c_master_init();
-#else
-    serial_master_init();
-#endif
-
-    /* int x = USB_IsInitialized; */
-    /* if (x) { */
-    /*     DDRD  |= 1<<5; */
-    /*     PORTD &= ~(1<<5); */
-    /* } else { */
-
-    // use the pro micro TX led as an indicator
-    // pull D5 low to turn on
-    DDRD  |= 1<<5;
-    PORTD |= (1<<5);
-    /* } */
+    TX_RX_LED_INIT;
 
     // initialize matrix state: all keys off
     for (uint8_t i=0; i < MATRIX_ROWS; i++) {
         matrix[i] = 0;
         matrix_debouncing[i] = 0;
     }
-
 }
 
 uint8_t _matrix_scan(void)
@@ -128,28 +120,22 @@ uint8_t _matrix_scan(void)
     return 1;
 }
 
-
-uint8_t matrix_scan(void)
-{
-    int ret = _matrix_scan();
-
-
+// Get rows from other half over i2c
+int i2c_transaction(void) {
     int slaveOffset = (isLeftHand) ? (ROWS_PER_HAND) : 0;
 
-#ifdef USE_I2C
-    // Get rows from other half over i2c
-    // Matrix stored at 0x00-0x03
     int err = i2c_master_start(SLAVE_I2C_ADDRESS + I2C_WRITE);
     if (err) goto i2c_error;
+
+    // Matrix stored at 0x00-0x03
     err = i2c_master_write(0x00);
     if (err) goto i2c_error;
+
+    // Start read
     err = i2c_master_start(SLAVE_I2C_ADDRESS + I2C_READ);
     if (err) goto i2c_error;
 
     if (!err) {
-        // turn off the indicator led on no error
-        PORTD |= (1<<5);
-
         int i;
         for (i = 0; i < ROWS_PER_HAND-1; ++i) {
             matrix[slaveOffset+i] = i2c_master_read(I2C_ACK);
@@ -158,42 +144,54 @@ uint8_t matrix_scan(void)
         i2c_master_stop();
     } else {
 i2c_error: // the cable is disconnceted, or something else went wrong
-
-        // reset the i2c state
-        TWCR = 0;
-
-        // turn on the indicator led
-        PORTD &= ~(1<<5);
-
-        // if we cannot communicate with the other half, then unset all of its keys
-        for (int i = 0; i < ROWS_PER_HAND; ++i) {
-            matrix[slaveOffset+i] = 0;
-        }
+        reset_i2c_state();
+        return err;
     }
+}
+
+int serial_transaction(void) {
+    int slaveOffset = (isLeftHand) ? (ROWS_PER_HAND) : 0;
+
+    if (serial_update_buffers()) {
+        return 1;
+    }
+
+    for (int i = 0; i < ROWS_PER_HAND; ++i) {
+        matrix[slaveOffset+i] = serial_slave_buffer[i];
+    }
+    return 0;
+}
+
+uint8_t matrix_scan(void)
+{
+    int ret = _matrix_scan();
+
+
+
+#ifdef USE_I2C
+    if( i2c_transaction() ) {
 #else
     if( serial_transaction() ) {
-        // turn on the indicator led
-        PORTD &= ~(1<<5);
-        // if we cannot communicate with the other half, then unset all of its keys
+#endif
+        // turn on the indicator led when halves are disconnected
+        TXLED1;
+
+        // reset other half if disconnected
+        int slaveOffset = (isLeftHand) ? (ROWS_PER_HAND) : 0;
+
         for (int i = 0; i < ROWS_PER_HAND; ++i) {
             matrix[slaveOffset+i] = 0;
         }
     } else {
         // turn off the indicator led on no error
-        PORTD |= (1<<5);
-        // no error
-
-        for (int i = 0; i < ROWS_PER_HAND; ++i) {
-            matrix[slaveOffset+i] = serial_slave_buffer[i];
-        }
+        TXLED0;
     }
-#endif
 
     return ret;
 }
 
 void matrix_slave_scan(void) {
-    int ret = _matrix_scan();
+    _matrix_scan();
 
     int offset = (isLeftHand) ? 0 : (MATRIX_ROWS / 2);
 

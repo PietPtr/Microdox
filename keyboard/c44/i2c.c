@@ -1,5 +1,10 @@
 #include <util/twi.h>
-#include "i2c-master.h"
+#include <avr/io.h>
+#include <stdlib.h>
+#include <avr/interrupt.h>
+#include <util/twi.h>
+#include <stdbool.h>
+#include "i2c.h"
 
 // Limits the amount of we wait for any one i2c transaction.
 // Since were running SCL line 100kHz (=> 10μs/bit), and each transactions is
@@ -8,6 +13,13 @@
 // (F_CPU/SCL_CLOCK)  =>  # of μC cycles to transfer a bit
 // poll loop takes at least 8 clock cycles to execute
 #define I2C_LOOP_TIMEOUT (9+1)*(F_CPU/SCL_CLOCK)/8
+
+#define BUFFER_POS_INC() (slave_buffer_pos = (slave_buffer_pos+1)%SLAVE_BUFFER_SIZE)
+
+volatile uint8_t slave_buffer[SLAVE_BUFFER_SIZE];
+
+static volatile uint8_t slave_buffer_pos;
+static volatile bool slave_has_register_set = false;
 
 // Wait for an i2c operation to finish
 inline static
@@ -84,4 +96,64 @@ uint8_t i2c_master_read(int ack) {
 
   i2c_delay();
   return TWDR;
+}
+
+void i2c_reset_state(void) {
+  TWCR = 0;
+}
+
+void i2c_slave_init(uint8_t address) {
+  TWAR = address << 0; // slave i2c address
+  // TWEN  - twi enable
+  // TWEA  - enable address acknowledgement
+  // TWINT - twi interrupt flag
+  // TWIE  - enable the twi interrupt
+  TWCR = (1<<TWIE) | (1<<TWEA) | (1<<TWINT) | (1<<TWEN);
+}
+
+ISR(TWI_vect);
+
+ISR(TWI_vect) {
+  uint8_t ack = 1;
+  switch(TW_STATUS) {
+    case TW_SR_SLA_ACK:
+      // this device has been addressed as a slave receiver
+      slave_has_register_set = false;
+      break;
+
+    case TW_SR_DATA_ACK:
+      // this device has received data as a slave receiver
+      // The first byte that we receive in this transaction sets the location
+      // of the read/write location of the slaves memory that it exposes over
+      // i2c.  After that, bytes will be written at slave_buffer_pos, incrementing
+      // slave_buffer_pos after each write.
+      if(!slave_has_register_set) {
+        slave_buffer_pos = TWDR;
+        // don't acknowledge the master if this memory loctaion is out of bounds
+        if ( slave_buffer_pos >= SLAVE_BUFFER_SIZE ) {
+          ack = 0;
+          slave_buffer_pos = 0;
+        }
+        slave_has_register_set = true;
+      } else {
+        slave_buffer[slave_buffer_pos] = TWDR;
+        BUFFER_POS_INC();
+      }
+      break;
+
+    case TW_ST_SLA_ACK:
+    case TW_ST_DATA_ACK:
+      // master has addressed this device as a slave transmitter and is
+      // requesting data.
+      TWDR = slave_buffer[slave_buffer_pos];
+      BUFFER_POS_INC();
+      break;
+
+    case TW_BUS_ERROR: // something went wrong, reset twi state
+      TWCR = 0;
+    default:
+      break;
+  }
+  // Reset everything, so we are ready for the next TWI interrupt
+  TWCR |= (1<<TWIE) | (1<<TWINT) | (ack<<TWEA) | (1<<TWEN);
 }

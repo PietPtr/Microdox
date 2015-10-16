@@ -49,11 +49,9 @@ TARGET_DIR = .
 
 # project specific files
 SRC =	matrix.c \
-	i2c-master.c \
-	i2c-slave.c \
+	i2c.c \
 	serial.c \
-	c44-util.c \
-	main.c \
+	split-util.c \
 	led.c
 
 CONFIG_H = config.h
@@ -61,7 +59,8 @@ CONFIG_H = config.h
 # MCU name
 MCU = atmega32u4
 
-PROGRAM_CMD=sleep 3; avrdude -p atmega32u4 -P /dev/ttyACM0 -c avr109 -U flash:w:$(TARGET).hex
+COM_PORT=/dev/ttyACM0
+PROGRAM_CMD=sleep 3; avrdude -p atmega32u4 -P $(COM_PORT) -c avr109 -U flash:w:$(TARGET).hex
 
 # Processor frequency.
 #     This will define a symbol, F_CPU, in all source code files equal to the
@@ -108,17 +107,22 @@ OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
 #   USBaspLoader     2048
 OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
+# Changes some bootmagic settings for when the space is on the left half
+OPT_DEFS += -DSPACE_ON_LEFT_HALF
+
+# # Use I2C for communication between the halves of the keyboard
+# OPT_DEFS += -DUSE_I2C
 
 # Build Options
 #   comment out to disable the options.
 #
-#BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
+BOOTMAGIC_ENABLE = yes	# Virtual DIP switch configuration(+1000)
 MOUSEKEY_ENABLE = yes	# Mouse keys(+4700)
 EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
-#CONSOLE_ENABLE = yes	# Console for debug(+400)
-#COMMAND_ENABLE = yes    # Commands for debug and configuration
-#SLEEP_LED_ENABLE = yes  # Breathing sleep LED during USB suspend
-#NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
+CONSOLE_ENABLE = yes	# Console for debug(+400)
+COMMAND_ENABLE = yes    # Commands for debug and configuration
+SLEEP_LED_ENABLE = yes  # Breathing sleep LED during USB suspend
+NKRO_ENABLE = yes	# USB Nkey Rollover
 ACTIONMAP_ENABLE = yes	# Use 16bit action codes in keymap instead of 8bit keycodes
 
 
@@ -145,13 +149,23 @@ endif
 VPATH += $(TARGET_DIR)
 VPATH += $(TMK_DIR)
 
-include $(TMK_DIR)/common.mk
-include $(TMK_DIR)/protocol.mk
+# Un comment this line if you want to use pjrc protocol
+# include $(TMK_DIR)/protocol/pjrc.mk
+
 include $(TMK_DIR)/protocol/lufa.mk
+include $(TMK_DIR)/common.mk
 include $(TMK_DIR)/rules.mk
 
+
+debug-on: EXTRAFLAGS += -DDEBUG -DDEBUG_ACTION
+debug-on: all
+
+debug-off: EXTRAFLAGS += -DNO_DEBUG -DNO_PRINT
+debug-off: OPT_DEFS := $(filter-out -DCONSOLE_ENABLE,$(OPT_DEFS))
+debug-off: all
+
 eeprom-left:
-	sleep 3; avrdude -p atmega32u4 -P /dev/ttyACM0 -c avr109 -U eeprom:w:$(TARGET)-left.eep
+	sleep 3; avrdude -p atmega32u4 -P $(COM_PORT) -c avr109 -U eeprom:w:eeprom-lefthand.eep
 
 eeprom-right:
-	sleep 3; avrdude -p atmega32u4 -P /dev/ttyACM0 -c avr109 -U eeprom:w:$(TARGET)-right.eep
+	sleep 3; avrdude -p atmega32u4 -P $(COM_PORT) -c avr109 -U eeprom:w:eeprom-righthand.eep

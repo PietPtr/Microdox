@@ -33,7 +33,7 @@ const uint16_t PROGMEM actionmaps[][MATRIX_ROWS][MATRIX_COLS] = {
            H    , J    , K    , L    , SCLN , QUOT ,
            N    , M    , COMM , DOT  , SLSH , ESC  ,
            BSPC , SSFT , FN1  , LGUI , NO
-        )       ,
+    ),
     /* dvorak */
     [1] = ACTIONMAP(
         /* left hand */
@@ -46,7 +46,7 @@ const uint16_t PROGMEM actionmaps[][MATRIX_ROWS][MATRIX_COLS] = {
            D    , H    , T    , N    , S    , MINS ,
            B    , M    , W    , V    , Z    , TRNS  ,
            TRNS , TRNS , TRNS , TRNS , TRNS
-        )       ,
+    ),
     /* colemak */
     [2] = ACTIONMAP(
         /* left hand */
@@ -59,8 +59,8 @@ const uint16_t PROGMEM actionmaps[][MATRIX_ROWS][MATRIX_COLS] = {
            H    , N    , E    , I    , O    , QUOT ,
            K    , M    , COMM , DOT  , SLSH , TRNS ,
            TRNS , TRNS , TRNS , TRNS , TRNS
-        )       ,
-    /* symbol */
+   ),
+   /* symbol */
    [3] = ACTIONMAP(
        /* left hand */
            TRNS , GRV  , 2    , 3    , 4    , 5       ,
@@ -72,7 +72,7 @@ const uint16_t PROGMEM actionmaps[][MATRIX_ROWS][MATRIX_COLS] = {
            s(RBRC) , RBRC , s(0) , EQL    , 0      , MINS ,
            s(6)    , s(7) , s(8) , s(EQL) , s(GRV) , FN0  ,
            TRNS    , TRNS , TRNS , TRNS   , TRNS
-    )              ,
+    ),
     /* fn */
     [4] = ACTIONMAP(
         /* left hand */
@@ -85,20 +85,20 @@ const uint16_t PROGMEM actionmaps[][MATRIX_ROWS][MATRIX_COLS] = {
            c(PGDN) , c(LEFT) , c(DOWN) , c(RGHT) , c(BSPC) , F11 ,
            F6      , F7      , F8      , F9      , F10     , FN0 ,
            TRNS    , TRNS    , TRNS    , TRNS    , TRNS
-        )          ,
+        ),
     /* media */
     [5] = ACTIONMAP(
         /* left hand */
-           NO   , PSCR  , MPLY , _VOLUP   , STOP   , F11     ,
-           NO   , _MUTE , MPRV , _VOLDOWN , MNXT   , APP     ,
-           LGUI , c(Y)  , c(B) , c(I)     , c(DOT) , c(SCLN) ,
-           TRNS , TRNS  , TRNS , TRNS     , TRNS   ,
+           NO   , PSCR , MPLY , VOLU , MSTP   , F11     ,
+           NO   , MUTE , MPRV , VOLD , MNXT   , APP     ,
+           LGUI , c(Y) , c(B) , c(I) , c(DOT) , c(SCLN) ,
+           TRNS , TRNS , TRNS , TRNS , TRNS   ,
         /* right hand */
-           WH_U   , BTN1   , MS_U    , BTN2 , NO   , NO  ,
-           WH_D   , MS_L   , MS_D    , MS_R , NO   , NO  ,
-           QWERTY , DVORAK , COLEMAK , NO   , NO   , FN0 ,
-           TRNS   , TRNS   , TRNS    , TRNS , TRNS
-        )         ,
+           WH_U , BTN1   , MS_U   , BTN2    , NO   , NO  ,
+           WH_D , MS_L   , MS_D   , MS_R    , NO   , NO  ,
+           NO   , QWERTY , DVORAK , COLEMAK , NO   , FN0 ,
+           TRNS , TRNS   , TRNS   , TRNS    , TRNS
+    ),
 };
 
 /*

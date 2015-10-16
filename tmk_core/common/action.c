@@ -379,9 +379,7 @@ void process_action(keyrecord_t *record)
      * not be generated for the oneshot key event.
      */
     if (do_release_oneshot && !(get_oneshot_layer_state() & ONESHOT_PRESSED )   ) {
-        clear_weak_mods();
-        unregister_mods(action.key.mods);
-        unregister_code(action.key.code);
+        clear_keyboard();
     }
 }
 
