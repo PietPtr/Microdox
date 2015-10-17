@@ -40,7 +40,7 @@
 
 #define CPU_PRESCALE(n)    (CLKPR = 0x80, CLKPR = (n))
 
-__attribute__ ((weak))
+
 int main(void)
 {
     // set for 16 MHz clock
