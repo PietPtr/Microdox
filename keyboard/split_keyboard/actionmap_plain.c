@@ -5,9 +5,13 @@
 #include "action_code.h"
 #include "action_layer.h"
 
+#include <avr/wdt.h>
+
 /* id for user defined functions */
 enum function_id {
     RESET_LAYER_STATE,
+    PROMICRO_RESET,
+    PROMICRO_PROGRAM,
 };
 
 #define AC_FN1            ACTION_LAYER_ONESHOT(3)
@@ -20,6 +24,9 @@ enum function_id {
 #define AC_QWERTY         ACTION_DEFAULT_LAYER_SET(0)
 #define AC_DVORAK         ACTION_DEFAULT_LAYER_SET(1)
 #define AC_COLEMAK        ACTION_DEFAULT_LAYER_SET(2)
+
+#define AC_PROMICRO_PROGRAM  ACTION_FUNCTION(PROMICRO_PROGRAM)
+#define AC_PROMICRO_RESET    ACTION_FUNCTION(PROMICRO_RESET)
 
 const uint16_t PROGMEM actionmaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* qwerty */
@@ -64,14 +71,14 @@ const uint16_t PROGMEM actionmaps[][MATRIX_ROWS][MATRIX_COLS] = {
    /* symbol */
    [3] = ACTIONMAP(
        /* left hand */
-            TRNS , COMM , 2    , 3    , 4    , 5       ,
+            TRNS , GRV  , 2    , 3    , 4    , 5       ,
             TRNS , 1    , BSLS , s(9) , LBRC , s(LBRC) ,
             TRNS , s(1) , s(2) , s(3) , s(4) , s(5)    ,
             TRNS , TRNS , TRNS , TRNS , TRNS ,
         /* right hand */
-            6       , 7    , 8    , 9      , DOT     , GRV    ,
+            6       , 7    , 8    , 9      , s(EQL)  , MINS   ,
             s(RBRC) , RBRC , s(0) , EQL    , 0       , s(GRV) ,
-            s(6)    , s(7) , s(8) , s(EQL) , s(BSLS) , FN0    ,
+            s(6)    , s(7) , s(8) , DOT    , s(BSLS) , FN0    ,
             TRNS    , TRNS , TRNS , TRNS   , TRNS
     ),
     /* fn */
@@ -95,12 +102,27 @@ const uint16_t PROGMEM actionmaps[][MATRIX_ROWS][MATRIX_COLS] = {
             LGUI , c(Y) , c(B) , c(I) , c(DOT) , c(SCLN) ,
             TRNS , TRNS , TRNS , TRNS , TRNS   ,
         /* right hand */
-            WH_U , BTN1   , MS_U   , BTN2    , NO   , NO  ,
-            WH_D , MS_L   , MS_D   , MS_R    , NO   , NO  ,
+            WH_U , BTN1   , MS_U   , BTN2    , NO   , PROMICRO_PROGRAM  ,
+            WH_D , MS_L   , MS_D   , MS_R    , NO   , PROMICRO_RESET  ,
             NO   , QWERTY , DVORAK , COLEMAK , NO   , FN0 ,
             TRNS , TRNS   , TRNS   , TRNS    , TRNS
     ),
 };
+
+void promicro_bootloader_jmp(bool program) {
+    uint16_t *const bootKeyPtr = (uint16_t *)0x0800;
+
+    // Value used by Caterina bootloader use to determine whether to run the
+    // sketch or the bootloader programmer.
+    uint16_t bootKey = program ? 0x7777 : 0;
+
+    *bootKeyPtr = bootKey;
+
+    // setup watchdog timeout
+    wdt_enable(WDTO_60MS);
+
+    while(1) {} // wait for watchdog timer to trigger
+}
 
 /*
  * user defined action function
@@ -123,6 +145,12 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
                     clear_keyboard();
                 }
             }
+            break;
+        case PROMICRO_RESET:
+            promicro_bootloader_jmp(false);
+            break;
+        case PROMICRO_PROGRAM:
+            promicro_bootloader_jmp(true);
             break;
         default:
             break;

@@ -144,9 +144,11 @@ int i2c_transaction(void) {
         i2c_master_stop();
     } else {
 i2c_error: // the cable is disconnceted, or something else went wrong
-        reset_i2c_state();
+        i2c_reset_state();
         return err;
     }
+
+    return 0;
 }
 
 int serial_transaction(void) {

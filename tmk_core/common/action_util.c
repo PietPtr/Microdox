@@ -66,18 +66,47 @@ static int16_t oneshot_time = 0;
 */
 static int8_t oneshot_layer_data = 0;
 
-static inline uint8_t get_oneshot_layer(void)
-{
-    return oneshot_layer_data >> 3;
-}
-inline uint8_t get_oneshot_layer_state(void)
-{
-    return oneshot_layer_data & 0b111;
-}
+inline uint8_t get_oneshot_layer(void) { return oneshot_layer_data >> 3; }
+inline uint8_t get_oneshot_layer_state(void) { return oneshot_layer_data & 0b111; }
 
 #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
 static int16_t oneshot_layer_time = 0;
+inline bool has_oneshot_layer_timed_out() {
+    return TIMER_DIFF_16(timer_read(), oneshot_layer_time) >= ONESHOT_TIMEOUT &&
+        !(get_oneshot_layer_state() & ONESHOT_TOGGLED);
+}
 #endif
+
+/* Oneshot layer */
+void set_oneshot_layer(uint8_t layer, uint8_t state)
+{
+    oneshot_layer_data = layer << 3 | state;
+    layer_on(layer);
+#if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
+    oneshot_layer_time = timer_read();
+#endif
+}
+void reset_oneshot_layer(void) {
+    oneshot_layer_data = 0;
+#if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
+    oneshot_layer_time = 0;
+#endif
+}
+void clear_oneshot_layer_state(oneshot_fullfillment_t state)
+{
+    uint8_t start_state = oneshot_layer_data;
+    oneshot_layer_data &= ~state;
+    if (!get_oneshot_layer_state() && start_state != oneshot_layer_data) {
+        layer_off(get_oneshot_layer());
+#if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
+    oneshot_layer_time = 0;
+#endif
+    }
+}
+bool is_oneshot_layer_active(void)
+{
+    return get_oneshot_layer_state();
+}
 #endif
 
 void send_keyboard_report(void) {
@@ -95,21 +124,7 @@ void send_keyboard_report(void) {
         if (has_anykey()) {
             clear_oneshot_mods();
         }
-    } 
-
-/* TODO:  add oneshot layer timeout */
-/* oneshot layer code */
-/* if (is_oneshot_layer_active()) { */
-/* #if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0)) */
-/*     if (TIMER_DIFF_16(timer_read(), oneshot_layer_time) >= ONESHOT_TIMEOUT) { */
-/*         dprintf("Oneshot layer: timeout\n"); */
-/*         clear_oneshot_layer_state(); */
-/*     } */
-/* #endif */
-/*     /1* if (has_anykey()) { *1/ */
-/*     /1*     clear_oneshot_layer_state(); *1/ */
-/*     /1* } *1/ */
-/* } */
+    }
 
 #endif
     host_keyboard_send(keyboard_report);
@@ -182,42 +197,6 @@ uint8_t get_oneshot_mods(void)
     return oneshot_mods;
 }
 #endif
-
-/* Oneshot layer */
-#ifndef NO_ACTION_ONESHOT
-void set_oneshot_layer(uint8_t layer, uint8_t state)
-{
-    oneshot_layer_data = layer << 3 | state;
-    layer_on(layer);
-#if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
-    oneshot_layer_time = timer_read();
-#endif
-}
-void reset_oneshot_layer(void) {
-    oneshot_layer_data = 0;
-#if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
-    oneshot_layer_time = 0;
-#endif
-}
-void clear_oneshot_layer_state(oneshot_fullfillment_t state)
-{
-    uint8_t start_state = oneshot_layer_data;
-    oneshot_layer_data &= ~state;
-    if (!get_oneshot_layer_state() && start_state != oneshot_layer_data) {
-        layer_off(get_oneshot_layer());
-    }
-#if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
-    oneshot_layer_time = 0;
-#endif
-}
-bool is_oneshot_layer_active(void)
-{
-    return get_oneshot_layer_state();
-}
-#endif
-
-
-
 
 /*
  * inspect keyboard state

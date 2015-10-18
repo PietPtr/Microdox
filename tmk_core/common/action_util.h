@@ -66,10 +66,12 @@ typedef enum {
   ONESHOT_TOGGLED = 0b100
 } oneshot_fullfillment_t;
 void set_oneshot_layer(uint8_t layer, uint8_t state);
+uint8_t get_oneshot_layer(void);
 void clear_oneshot_layer_state(oneshot_fullfillment_t state);
 void reset_oneshot_layer(void);
 bool is_oneshot_layer_active(void);
 uint8_t get_oneshot_layer_state(void);
+bool has_oneshot_layer_timed_out(void);
 
 /* inspect */
 uint8_t has_anykey(void);
