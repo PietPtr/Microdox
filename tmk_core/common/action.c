@@ -127,7 +127,7 @@ void process_action(keyrecord_t *record)
                                 dprint("MODS_TAP: Oneshot: start\n");
                                 set_oneshot_mods(mods);
                     #if defined(ONESHOT_TAP_TOGGLE) && ONESHOT_TAP_TOGGLE > 1
-                            } else if (tap_count == TAPPING_TOGGLE) {
+                            } else if (tap_count == ONESHOT_TAP_TOGGLE) {
                                 dprint("MODS_TAP: Toggling oneshot");
                                 clear_oneshot_mods();
                                 set_oneshot_locked_mods(mods);
@@ -148,7 +148,7 @@ void process_action(keyrecord_t *record)
                                     clear_oneshot_mods();
                                     unregister_mods(mods);
                                 }
-                            } else if (tap_count == TAPPING_TOGGLE) {
+                            } else if (tap_count == ONESHOT_TAP_TOGGLE) {
                                 // Toggle Oneshot Layer
                     #endif
                             } else {
@@ -312,13 +312,13 @@ void process_action(keyrecord_t *record)
                             reset_oneshot_layer();
                             layer_off(action.layer_tap.val);
                             break;
-                        } else if (tap_count < TAPPING_TOGGLE) {
+                        } else if (tap_count < ONESHOT_TAP_TOGGLE) {
                             layer_on(action.layer_tap.val);
                             set_oneshot_layer(action.layer_tap.val, ONESHOT_START);
                         }
                     } else {
                         add_mods(get_oneshot_locked_mods());
-                        if (tap_count >= TAPPING_TOGGLE) {
+                        if (tap_count >= ONESHOT_TAP_TOGGLE) {
                             reset_oneshot_layer();
                             clear_oneshot_locked_mods();
                             set_oneshot_layer(action.layer_tap.val, ONESHOT_TOGGLED);

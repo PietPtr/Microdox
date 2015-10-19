@@ -94,7 +94,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* Action tapping settings */
 #define TAPPING_TERM    200 // default 200
-#define TAPPING_TOGGLE  2   // default 5
+/* #define TAPPING_TOGGLE  2   // default 5 */
 /* #define ONESHOT_TIMEOUT 5000 // default undefined */
 #define ONESHOT_TAP_TOGGLE 2
 

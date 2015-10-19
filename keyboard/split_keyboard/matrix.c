@@ -99,9 +99,6 @@ uint8_t _matrix_scan(void)
         matrix_row_t cols = read_cols();
         if (matrix_debouncing[i+offset] != cols) {
             matrix_debouncing[i+offset] = cols;
-            if (debouncing) {
-                debug("bounce!: "); debug_hex(debouncing); debug("\n");
-            }
             debouncing = DEBOUNCE;
         }
         unselect_rows();
