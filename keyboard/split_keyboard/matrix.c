@@ -37,8 +37,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #   define DEBOUNCE	5
 #endif
 
+#define ERROR_DISCONNECT_COUNT 5
+
 static uint8_t debouncing = DEBOUNCE;
 static const int ROWS_PER_HAND = MATRIX_ROWS/2;
+static uint8_t error_count = 0;
 
 /* matrix state(1:on, 0:off) */
 static matrix_row_t matrix[MATRIX_ROWS];
@@ -175,15 +178,19 @@ uint8_t matrix_scan(void)
         // turn on the indicator led when halves are disconnected
         TXLED1;
 
-        // reset other half if disconnected
-        int slaveOffset = (isLeftHand) ? (ROWS_PER_HAND) : 0;
+        error_count++;
 
-        for (int i = 0; i < ROWS_PER_HAND; ++i) {
-            matrix[slaveOffset+i] = 0;
+        if (error_count > ERROR_DISCONNECT_COUNT) {
+            // reset other half if disconnected
+            int slaveOffset = (isLeftHand) ? (ROWS_PER_HAND) : 0;
+            for (int i = 0; i < ROWS_PER_HAND; ++i) {
+                matrix[slaveOffset+i] = 0;
+            }
         }
     } else {
         // turn off the indicator led on no error
         TXLED0;
+        error_count = 0;
     }
 
     return ret;

@@ -9,6 +9,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <stdbool.h>
 
 #include "serial.h"
 
@@ -18,6 +19,9 @@
 
 uint8_t volatile serial_slave_buffer[SERIAL_SLAVE_BUFFER_LENGTH] = {0};
 uint8_t volatile serial_master_buffer[SERIAL_MASTER_BUFFER_LENGTH] = {0};
+
+#define SLAVE_DATA_CORRUPT (1<<0)
+static volatile uint8_t status = 0;
 
 inline static
 void serial_delay(void) {
@@ -119,10 +123,14 @@ void serial_write_byte(uint8_t data) {
 ISR(SERIAL_PIN_INTERRUPT) {
   sync_send();
 
+  uint8_t checksum = 0;
   for (int i = 0; i < SERIAL_SLAVE_BUFFER_LENGTH; ++i) {
     serial_write_byte(serial_slave_buffer[i]);
     sync_send();
+    checksum += serial_slave_buffer[i];
   }
+  serial_write_byte(checksum);
+  sync_send();
 
   // wait for the sync to finish sending
   serial_delay();
@@ -130,13 +138,27 @@ ISR(SERIAL_PIN_INTERRUPT) {
   // read the middle of pulses
   _delay_us(SERIAL_DELAY/2);
 
+  uint8_t checksum_computed = 0;
   for (int i = 0; i < SERIAL_MASTER_BUFFER_LENGTH; ++i) {
     serial_master_buffer[i] = serial_read_byte();
-    /* serial_master_buffer[2] = serial_read_byte(); */
     sync_send();
+    checksum_computed += serial_master_buffer[i];
   }
+  uint8_t checksum_received = serial_read_byte();
+  sync_send();
 
-  serial_input();
+  serial_input(); // end transaction
+
+  if ( checksum_computed != checksum_received ) {
+    status |= SLAVE_DATA_CORRUPT;
+  } else {
+    status &= ~SLAVE_DATA_CORRUPT;
+  }
+}
+
+inline
+bool serial_slave_DATA_CORRUPT(void) {
+  return status & SLAVE_DATA_CORRUPT;
 }
 
 // Copies the serial_slave_buffer to the master and sends the
@@ -169,17 +191,30 @@ int serial_update_buffers(void) {
   // if the slave is present syncronize with it
   sync_recv();
 
+  uint8_t checksum_computed = 0;
   // receive data from the slave
   for (int i = 0; i < SERIAL_SLAVE_BUFFER_LENGTH; ++i) {
     serial_slave_buffer[i] = serial_read_byte();
     sync_recv();
+    checksum_computed += serial_slave_buffer[i];
+  }
+  uint8_t checksum_received = serial_read_byte();
+  sync_recv();
+
+  if (checksum_computed != checksum_received) {
+    sei();
+    return 1;
   }
 
+  uint8_t checksum = 0;
   // send data to the slave
   for (int i = 0; i < SERIAL_MASTER_BUFFER_LENGTH; ++i) {
     serial_write_byte(serial_master_buffer[i]);
     sync_recv();
+    checksum += serial_master_buffer[i];
   }
+  serial_write_byte(checksum);
+  sync_recv();
 
   // always, release the line when not in use
   serial_output();

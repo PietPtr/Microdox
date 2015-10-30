@@ -2,8 +2,9 @@
 #define MY_SERIAL_H
 
 #include "config.h"
+#include <stdbool.h>
 
-/* TODO:  some defines for interupt setup */
+/* TODO:  some defines for interrupt setup */
 #define SERIAL_PIN_DDR DDRD
 #define SERIAL_PIN_PORT PORTD
 #define SERIAL_PIN_INPUT PIND
@@ -20,5 +21,6 @@ extern volatile uint8_t serial_master_buffer[SERIAL_MASTER_BUFFER_LENGTH];
 void serial_master_init(void);
 void serial_slave_init(void);
 int serial_update_buffers(void);
+bool serial_slave_data_corrupt(void);
 
 #endif
