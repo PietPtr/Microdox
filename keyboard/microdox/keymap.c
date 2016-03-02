@@ -30,26 +30,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = { */
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    KEYMAP(ESC,  1,    2,    3,    4,    5,    LGUI, \
+    KEYMAP(ESC,  1,    2,    3,    4,    5,    EQL,  \
            TAB,  Q,    W,    E,    R,    T,    FN0,  \
            LSFT, A,    S,    D,    F,    G,          \
-           LCTL, Z,    X,    C,    V,    B,    HOME, \
+           LCTL, Z,    X,    C,    V,    B,    LALT, \
                                          SPC,  BSPC, \
-           SLCK, 6,    7,    8,    9,    0,    BSPC, \
+           MINS, 6,    7,    8,    9,    0,    BSPC, \
            FN0,  Y,    U,    I,    O,    P,    BSLS, \
                  H,    J,    K,    L,    SCLN, RSFT, \
-           EQL,  N,    M,    COMM, DOT,  SLSH, RCTL, \
+           RALT, N,    M,    COMM, DOT,  SLSH, RCTL, \
            SPC,  ENT),
 
-    KEYMAP(ESC,  F1,   F2,   F3,   F4,   F5,   F6,   \
-           TAB,  WH_L, UP,   WH_R, WH_U, TRNS, FN0,  \
-           LSFT, LEFT, DOWN, RGHT, WH_D, TRNS,       \
-           LCTL, TRNS, TRNS, TRNS, TRNS, TRNS, PGUP, \
+    KEYMAP(GRV,  F1,   F2,   F3,   F4,   F5,   F6,   \
+           TRNS, WH_L, UP,   WH_R, WH_U, TRNS, FN0,  \
+           CAPS, LEFT, DOWN, RGHT, WH_D, TRNS,       \
+           LGUI, TRNS, TRNS, TRNS, TRNS, TRNS, PGUP, \
                                          TRNS, TRNS, \
-           F7,   F8,   F9,   F10,  F11,  F10,  BSPC, \
-           FN0,  TRNS, TRNS, TRNS, INS,  PSCR, BSLS, \
-                 HOME, TRNS, TRNS, TRNS, TRNS, RSFT, \
-           MINS, END,  TRNS, COMM, TRNS, TRNS, RCTL, \
+           F7,   F8,   F9,   F10,  F11,  F12,  DEL, \
+           FN0,  TRNS, TRNS, SLCK, INS,  PSCR, QUOT, \
+                 HOME, TRNS, LBRC, RBRC, PAUS, TRNS, \
+           PGDN, END,  TRNS, COMM, TRNS, TRNS, RGUI, \
            TRNS, TRNS),
 };
 

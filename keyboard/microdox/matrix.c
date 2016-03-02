@@ -249,8 +249,8 @@ uint8_t matrix_key_count(void)
 static void  init_cols(void)
 {
     // Input with pull-up(DDR:0, PORT:1)
-    DDRB  &= ~(1<<1 | 1<<2 | 1<<3);
-    PORTB |=  (1<<1 | 1<<2 | 1<<3);
+    DDRB  &= ~(1<<1 | 1<<3 | 1<<2);
+    PORTB |=  (1<<1 | 1<<3 | 1<<2);
     DDRF  &= ~(1<<4 | 1<<5 | 1<<6 | 1<<7);
     PORTF |=  (1<<4 | 1<<5 | 1<<6 | 1<<7);
 }
