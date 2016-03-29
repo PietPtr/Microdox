@@ -56,7 +56,8 @@ SRC =	keymap.c \
 	serial.c \
 	c44-util.c \
 	main.c \
-	led.c
+	led.c \
+    backlight.c
 	# main.cpp \
 
 CONFIG_H = config.h
@@ -122,6 +123,7 @@ EXTRAKEY_ENABLE = yes	# Audio control and System control(+450)
 #COMMAND_ENABLE = yes    # Commands for debug and configuration
 #SLEEP_LED_ENABLE = yes  # Breathing sleep LED during USB suspend
 #NKRO_ENABLE = yes	# USB Nkey Rollover - not yet supported in LUFA
+BACKLIGHT_ENABLE = yes # Enable keyboard backlight functionality
 
 #PS2_MOUSE_ENABLE = yes  # PS/2 mouse(TrackPoint) support
 #PS2_USE_BUSYWAIT = yes # uses primitive reference code

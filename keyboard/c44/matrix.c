@@ -249,20 +249,21 @@ uint8_t matrix_key_count(void)
 static void  init_cols(void)
 {
     // Input with pull-up(DDR:0, PORT:1)
-    DDRB  &= ~(1<<1 | 1<<3 | 1<<2 | 1<<6);
-    PORTB |=  (1<<1 | 1<<3 | 1<<2 | 1<<6);
-    DDRF  &= ~(1<<6 | 1<<7);
-    PORTF |=  (1<<6 | 1<<7);
+    DDRB  &= ~(1<<1 | 1<<3 | 1<<2);
+    PORTB |=  (1<<1 | 1<<3 | 1<<2);
+    DDRF  &= ~(1<<4 | 1<<5 | 1<<6 | 1<<7);
+    PORTF |=  (1<<4 | 1<<5 | 1<<6 | 1<<7);
 }
 
 static matrix_row_t read_cols(void)
 {
-    return (PINF&(1<<6) ? 0 : (1<<0)) |
-           (PINF&(1<<7) ? 0 : (1<<1)) |
-           (PINB&(1<<1) ? 0 : (1<<2)) |
-           (PINB&(1<<3) ? 0 : (1<<3)) |
-           (PINB&(1<<2) ? 0 : (1<<4)) |
-           (PINB&(1<<6) ? 0 : (1<<5));
+    return (PINF&(1<<4) ? 0 : (1<<0)) |
+           (PINF&(1<<5) ? 0 : (1<<1)) |
+           (PINF&(1<<6) ? 0 : (1<<2)) |
+           (PINF&(1<<7) ? 0 : (1<<3)) |
+           (PINB&(1<<1) ? 0 : (1<<4)) |
+           (PINB&(1<<3) ? 0 : (1<<5)) |
+           (PINB&(1<<2) ? 0 : (1<<6));
 }
 
 /* Row pin configuration

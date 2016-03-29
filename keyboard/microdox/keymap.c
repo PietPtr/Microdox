@@ -26,36 +26,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "debug.h"
 #include "keymap.h"
 #include "keymap_common.h"
-
+#include "backlight.h"
 
 /* const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = { */
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KEYMAP(ESC,  1,    2,    3,    4,    5,    EQL,  \
-           TAB,  Q,    W,    E,    R,    T,    FN0,  \
-           LSFT, A,    S,    D,    F,    G,          \
-           LCTL, Z,    X,    C,    V,    B,    LALT, \
+           LSFT, Q,    W,    E,    R,    T,    FN1,  \
+           FN0,  A,    S,    D,    F,    G,          \
+           LCTL, Z,    X,    C,    V,    B,    TAB,  \
                                          SPC,  BSPC, \
            MINS, 6,    7,    8,    9,    0,    BSPC, \
            FN0,  Y,    U,    I,    O,    P,    BSLS, \
-                 H,    J,    K,    L,    SCLN, RSFT, \
-           RALT, N,    M,    COMM, DOT,  SLSH, RCTL, \
-           SPC,  ENT),
+                 H,    J,    K,    L,    SCLN, LALT, \
+           LGUI, N,    M,    COMM, DOT,  SLSH, RSFT, \
+           ENT,  SPC),
+
+    KEYMAP(TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, \
+           TRNS, SLSH, COMM, DOT,  P,    Y,    TRNS, \
+           TRNS, A,    O,    E,    U,    I,          \
+           TRNS, SCLN, Q,    J,    K,    X,    TRNS, \
+                                         TRNS, TRNS, \
+           TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, \
+           TRNS, F,    G,    C,    R,    L,    TRNS, \
+                 D,    H,    T,    N,    S,    TRNS, \
+           TRNS, B,    M,    W,    V,    Z,    TRNS, \
+           TRNS, TRNS),
 
     KEYMAP(GRV,  F1,   F2,   F3,   F4,   F5,   F6,   \
            TRNS, WH_L, UP,   WH_R, WH_U, TRNS, FN0,  \
-           CAPS, LEFT, DOWN, RGHT, WH_D, TRNS,       \
-           LGUI, TRNS, TRNS, TRNS, TRNS, TRNS, PGUP, \
-                                         TRNS, TRNS, \
-           F7,   F8,   F9,   F10,  F11,  F12,  DEL, \
-           FN0,  TRNS, TRNS, SLCK, INS,  PSCR, QUOT, \
-                 HOME, TRNS, LBRC, RBRC, PAUS, TRNS, \
-           PGDN, END,  TRNS, COMM, TRNS, TRNS, RGUI, \
-           TRNS, TRNS),
+           TRNS, LEFT, DOWN, RGHT, WH_D, TRNS,       \
+           TRNS, TRNS, TRNS, TRNS, TRNS, TRNS, LGUI, \
+                                         HOME, PGUP, \
+           F7,   F8,   F9,   F10,  F11,  F12,  DEL,  \
+           TRNS, FN2,  FN3,  SLCK, INS,  PSCR, QUOT, \
+                 PGUP, TRNS, LBRC, RBRC, PAUS, TRNS, \
+           RGUI, PGDN, TRNS, COMM, TRNS, TRNS, TRNS, \
+           PGDN, END),
 };
 
 /*
  * Fn action definition
  */
 const uint16_t PROGMEM fn_actions[] = {
-    [0] = ACTION_LAYER_MOMENTARY(1),
+    [0] = ACTION_LAYER_MOMENTARY(2),
+    [1] = ACTION_LAYER_TOGGLE(1),
+    [2] = ACTION_BACKLIGHT_TOGGLE(),
+    [3] = ACTION_BACKLIGHT_LEVEL(CASELIGHT)
 };
