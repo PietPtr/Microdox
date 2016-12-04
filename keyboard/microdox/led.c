@@ -1,5 +1,5 @@
 /*
-Copyright 2012 Jun Wako <wakojun@gmail.com>
+Copyright 2011 Jun Wako <wakojun@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,8 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "stdint.h"
 #include "led.h"
 
-static int count = 0;
-
 void led_set(uint8_t usb_led)
 {
+    if (usb_led & (1<<USB_LED_NUM_LOCK)) {
+        DDRD |= (1<<1);
+        PORTD |= (1<<1);
+    } else {
+        DDRD |= (1<<1);
+        PORTD &= ~(1<<1);
+    }
 }
